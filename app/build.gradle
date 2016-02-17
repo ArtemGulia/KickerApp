@@ -9,6 +9,7 @@ buildscript {
 }
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 23
@@ -47,7 +48,7 @@ dependencies {
     //Facebook
     compile 'com.facebook.android:facebook-android-sdk:4.+'
     //Google
-//    compile 'com.google.android.gms:play-services-auth:8.4.0'
+    compile 'com.google.android.gms:play-services-auth:8.3.0'
     //Twitter
     compile('com.twitter.sdk.android:twitter:1.12.1@aar') {
         transitive = true;
