@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_id": "kickerapp-ccf05",
+    "project_number": "656739271471",
+    "name": "KickerApp"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656739271471:android:d93b1e9cd701daa7",
+        "client_id": "android:com.g_art.kickerapp",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.g_art.kickerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "656739271471-rd2ara10udjps9n46atfqt3ula3e7evo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.g_art.kickerapp",
+            "certificate_hash": "B74F5868948719912CED43C25A3C1EAE24541E1C"
+          }
+        },
+        {
+          "client_id": "656739271471-hbcj02s3v14h2sqnpdf9rd55efr7hvga.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}
