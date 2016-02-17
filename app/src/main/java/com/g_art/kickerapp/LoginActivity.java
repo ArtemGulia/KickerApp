@@ -32,7 +32,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -57,7 +63,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final String TWITTER_KEY = "sKrTcP9bMAINWGBWUAsGLCmcL";
     private static final String TWITTER_SECRET = "2CyWwR7zP2Xt15eKuXAo2wUWZrwOOLEfyKKFcfhPgIuxRcsmOK";
 
-    private TwitterLoginButton loginButton;
+    private TwitterLoginButton twLoginButton;
+    private LoginButton fbLoginButton;
+
+    private CallbackManager fbCallbackManager;
 
 
     /**
@@ -88,8 +97,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
 
         initSocial();
-
-
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -119,8 +126,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
 
 
-        loginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
-        loginButton.setCallback(new Callback<TwitterSession>() {
+        twLoginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
+        twLoginButton.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
                 // The TwitterSession is also available through:
@@ -134,9 +141,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 String twitterToken = authToken.token;
                 String twitterSecret = authToken.secret;
             }
+
             @Override
             public void failure(TwitterException exception) {
                 Log.d("TwitterKit", "Login with Twitter failure", exception);
+            }
+        });
+
+        fbLoginButton = (LoginButton) findViewById(R.id.fblogin_button);
+        fbLoginButton.registerCallback(fbCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                AccessToken fbToken = loginResult.getAccessToken();
+                String msg = "Token " + fbToken.getToken() + " userId " + fbToken.getUserId();
+                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d("FaceBookSDK", "Login with Facebook failure", null);
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.d("FaceBookSDK", "Login with Facebook failure", error);
             }
         });
 
@@ -150,6 +179,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         //Facebook initialization
         FacebookSdk.sdkInitialize(getApplicationContext());
+        fbCallbackManager = CallbackManager.Factory.create();
     }
 
     @Override
@@ -157,7 +187,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onActivityResult(requestCode, resultCode, data);
         // Make sure that the loginButton hears the result from any
         // Activity that it triggered.
-        loginButton.onActivityResult(requestCode, resultCode, data);
+        twLoginButton.onActivityResult(requestCode, resultCode, data);
+        fbCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void populateAutoComplete() {

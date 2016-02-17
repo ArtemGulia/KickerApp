@@ -63,18 +63,27 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <Button
+                android:id="@+id/email_sign_in_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/action_sign_in"
+                android:textStyle="bold"/>
+
             <com.twitter.sdk.android.core.identity.TwitterLoginButton
                 android:id="@+id/twitter_login_button"
                 android:layout_width="match_parent"
                 android:layout_marginTop="16dp"
                 android:layout_height="wrap_content"/>
 
-            <!--<com.facebook.login.widget.LoginButton-->
-                <!--android:id="@+id/login_button"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginTop="16dp"-->
-                <!--android:layout_marginBottom="30dp" />-->
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/fblogin_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="30dp" />
 
 
         </LinearLayout>

@@ -23,9 +23,17 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name="com.facebook.FacebookActivity"
+                  android:configChanges=
+                      "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                  android:theme="@android:style/Theme.Translucent.NoTitleBar"
+                  android:label="@string/app_name" />
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="3d64b8d775b44aefa84f54dd71d201f7d39be66e" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+                   android:value="@string/facebook_app_id"/>
     </application>
 
 </manifest>
