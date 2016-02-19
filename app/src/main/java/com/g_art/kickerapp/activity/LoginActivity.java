@@ -1,36 +1,15 @@
 package com.g_art.kickerapp.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -38,9 +17,13 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.g_art.kickerapp.R;
+import com.g_art.kickerapp.utils.SharedPrefsHandler;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -51,7 +34,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.common.api.Status;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -61,17 +43,26 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
-import io.fabric.sdk.android.Fabric;
-import java.util.ArrayList;
-import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import static android.Manifest.permission.READ_CONTACTS;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, OnClickListener {
+
+    private String playerId;
+    private String playerName;
+    private String provider;
+    private String providerId;
+    private String tokenId;
+
+    public static final String TWITTER = "twitter";
+    public static final String FACEBOOK = "facebook";
+    public static final String GOOGLE = "google";
 
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
     private static final String TWITTER_KEY = "sKrTcP9bMAINWGBWUAsGLCmcL";
@@ -89,28 +80,57 @@ public class LoginActivity extends AppCompatActivity implements
 
     private ProgressDialog mProgressDialog;
 
+    private SharedPrefsHandler loginHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initSocial();
+        SharedPreferences mPrefs = this.getSharedPreferences(getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE);
+        loginHandler = SharedPrefsHandler.getInstance(mPrefs);
+
+        initSocialSDK();
         setContentView(R.layout.activity_login);
 
         //===========================TWITTER==========================
+        twitterInitialization();
+
+        //===========================FACEBOOK==========================
+        facebookInitialization();
+
+        //===========================GOOGLE==========================
+        googleInitialization();
+
+    }
+
+    private void initSocialSDK() {
+        //Twitter initialization
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        Fabric.with(this, new Twitter(authConfig));
+
+        //Facebook initialization
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        fbCallbackManager = CallbackManager.Factory.create();
+    }
+
+    private void twitterInitialization() {
         twLoginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
         twLoginButton.setCallback(new Callback<TwitterSession>() {
+
             @Override
             public void success(Result<TwitterSession> result) {
                 // The TwitterSession is also available through:
                 // Twitter.getInstance().core.getSessionManager().getActiveSession()
                 TwitterSession session = result.data;
-                // TODO: Remove toast and use the TwitterSession's userID
-                // with your app's user model
-                String msg = "@" + session.getUserName() + " logged in! (#" + session.getUserId() + ")";
-                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
                 TwitterAuthToken authToken = session.getAuthToken();
                 String twitterToken = authToken.token;
                 String twitterSecret = authToken.secret;
+                tokenId = twitterToken;
+                playerId = "" + session.getUserId();
+                playerName = session.getUserName();
+
+                loginSuccess();
             }
 
             @Override
@@ -118,15 +138,41 @@ public class LoginActivity extends AppCompatActivity implements
                 Log.d("TwitterKit", "Login with Twitter failure", exception);
             }
         });
+    }
 
-        //===========================FACEBOOK==========================
+    private void facebookInitialization() {
         fbLoginButton = (LoginButton) findViewById(R.id.fbLogin_button);
         fbLoginButton.registerCallback(fbCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 AccessToken fbToken = loginResult.getAccessToken();
                 String msg = "Token " + fbToken.getToken() + " userId " + fbToken.getUserId();
-                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                tokenId = fbToken.getToken();
+                playerId = fbToken.getUserId();
+
+                /* make the API call */
+                new GraphRequest(
+                        AccessToken.getCurrentAccessToken(),
+                        "/" + playerId,
+                        null,
+                        HttpMethod.GET,
+                        new GraphRequest.Callback() {
+                            @Override
+                            public void onCompleted(GraphResponse response) {
+                                JSONObject responseObject = response.getJSONObject();
+                                if (responseObject != null) {
+                                    try {
+                                        playerName = responseObject.getString("name");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    loginSuccess();
+                                }
+                            }
+                        }
+                ).executeAsync();
+
             }
 
             @Override
@@ -140,13 +186,15 @@ public class LoginActivity extends AppCompatActivity implements
                 Log.d("FaceBookSDK", "Login with Facebook failure", error);
             }
         });
+    }
 
-        //===========================GOOGLE==========================
+    private void googleInitialization() {
         // [START configure_signin]
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+                .requestProfile()
                 .build();
         // [END configure_signin]
 
@@ -175,16 +223,6 @@ public class LoginActivity extends AppCompatActivity implements
         signInButton.setOnClickListener(this);
     }
 
-    private void initSocial() {
-        //Twitter initialization
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-        Fabric.with(this, new Twitter(authConfig));
-
-        //Facebook initialization
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        fbCallbackManager = CallbackManager.Factory.create();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -209,10 +247,14 @@ public class LoginActivity extends AppCompatActivity implements
             String name = acct.getDisplayName();
             String idToken = acct.getIdToken();
             String msg = "Token " + idToken + " name " + name;
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+            tokenId = idToken;
+            playerId = acct.getId();
+            playerName = name;
+            loginSuccess();
         }
-        Status status = result.getStatus();
     }
+
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -253,6 +295,25 @@ public class LoginActivity extends AppCompatActivity implements
                 signIn();
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+    }
+
+    private void loginSuccess() {
+        loginHandler.save(SharedPrefsHandler.LOGGED, SharedPrefsHandler.IS_LOGGED);
+        loginHandler.save(SharedPrefsHandler.PLAYER_NAME, playerName);
+        loginHandler.save(SharedPrefsHandler.PLAYER_ID, playerId);
+        loginHandler.save(SharedPrefsHandler.TOKEN_ID, tokenId);
+
+        String msg = "Token " + tokenId + " userId " + playerId + " name "+playerName;
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+        Intent intent = new Intent();
+        intent.putExtra("playerId", playerId);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     /***
