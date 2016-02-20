@@ -1,4 +1,4 @@
-package com.g_art.kickerapp.utils;
+package com.g_art.kickerapp.utils.api;
 
 import com.g_art.kickerapp.model.Game;
 
@@ -15,7 +15,7 @@ public interface GameApi {
 
     void createGame(Game game, Callback<Game> callback);
 
-    void getGameCallback(Callback<Game> callback);
+    void getGame(Game game, Callback<Game> callback);
 
     void getActiveGames(Callback<List<Game>> callback);
 

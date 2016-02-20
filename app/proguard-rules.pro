@@ -15,3 +15,31 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+
+#Facebook
+-keep class com.facebook.** {
+   *;
+}
+
+#Twitter
+-dontwarn com.squareup.okhttp.**
+-dontwarn com.google.appengine.api.urlfetch.**
+-dontwarn rx.**
+-dontwarn retrofit.**
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class com.squareup.okhttp.** { *; }
+-keep interface com.squareup.okhttp.** { *; }
+-keep class retrofit.** { *; }
+-keepclasseswithmembers class * {
+    @retrofit.http.* <methods>;
+}
+
+#Realm.io
+#-keep class io.realm.annotations.RealmModule
+#-keep @io.realm.annotations.RealmModule class *
+#-keep class io.realm.internal.Keep
+#-keep @io.realm.internal.Keep class * { *; }
+#-dontwarn javax.**
+#-dontwarn io.realm.**

@@ -1,4 +1,4 @@
-package com.g_art.kickerapp.utils;
+package com.g_art.kickerapp.utils.prefs;
 
 import android.content.SharedPreferences;
 
@@ -11,6 +11,7 @@ import java.util.Map;
 public class SharedPrefsHandler {
 
     public static final String LOGIN_PROVIDER = "provider";
+    public static final String COOKIE = "set-cookie";
     public static final String PROVIDER_ID = "providerId";
     public static final String LOGGED = "logged";
     public static final int IS_LOGGED = 1;

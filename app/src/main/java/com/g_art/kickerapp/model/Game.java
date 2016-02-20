@@ -8,6 +8,8 @@ import java.util.List;
  * Created by G_Art on 16/2/2016.
  */
 public class Game {
+    private String _id;
+    private Player createdBy;
     private String name;
     private Date date;
     private List<Team> teams;
@@ -15,7 +17,12 @@ public class Game {
     public Game() {
     }
 
-    public Game(String name) {
+    public Game(String _id) {
+        this._id = _id;
+    }
+
+    public Game(String _id, String name) {
+        this._id = _id;
         this.name = name;
     }
 
@@ -23,6 +30,22 @@ public class Game {
         this.name = name;
         this.date = date;
         this.teams = teams;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
+    }
+
+    public Player getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Player createdBy) {
+        this.createdBy = createdBy;
     }
 
     public String getName() {

@@ -1,4 +1,4 @@
-package com.g_art.kickerapp.utils;
+package com.g_art.kickerapp.utils.api;
 
 import com.g_art.kickerapp.model.Player;
 
@@ -6,6 +6,7 @@ import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.http.Body;
+import retrofit.http.GET;
 import retrofit.http.POST;
 
 
@@ -14,6 +15,9 @@ import retrofit.http.POST;
  * Created by G_Art on 18/2/2016.
  */
 public interface UserApi {
+
+    @GET("/auth/user")
+    Player authUser();
 
     @POST("")
     void getPlayer(@Body String providerId, @Body String provider, @Body String displayName, Callback<Player> callback);

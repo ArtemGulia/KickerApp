@@ -23,7 +23,12 @@ import com.facebook.HttpMethod;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.g_art.kickerapp.R;
-import com.g_art.kickerapp.utils.SharedPrefsHandler;
+import com.g_art.kickerapp.model.Game;
+import com.g_art.kickerapp.model.Player;
+import com.g_art.kickerapp.utils.RestClient;
+import com.g_art.kickerapp.utils.api.GameApi;
+import com.g_art.kickerapp.utils.prefs.SharedPrefsHandler;
+import com.g_art.kickerapp.utils.api.UserApi;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -46,7 +51,15 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import io.fabric.sdk.android.Fabric;
+import retrofit.RetrofitError;
+import retrofit.client.Header;
+import retrofit.client.Response;
+import retrofit.http.Headers;
 
 /**
  * A login screen that offers login via email/password.
@@ -125,10 +138,10 @@ public class LoginActivity extends AppCompatActivity implements
                 TwitterSession session = result.data;
                 TwitterAuthToken authToken = session.getAuthToken();
                 String twitterToken = authToken.token;
-                String twitterSecret = authToken.secret;
                 tokenId = twitterToken;
                 playerId = "" + session.getUserId();
                 playerName = session.getUserName();
+                provider = TWITTER;
 
                 loginSuccess();
             }
@@ -136,6 +149,8 @@ public class LoginActivity extends AppCompatActivity implements
             @Override
             public void failure(TwitterException exception) {
                 Log.d("TwitterKit", "Login with Twitter failure", exception);
+                Toast.makeText(getApplicationContext(), "Twitter Login Failed", Toast.LENGTH_LONG).show();
+                hideProgressDialog();
             }
         });
     }
@@ -146,8 +161,6 @@ public class LoginActivity extends AppCompatActivity implements
             @Override
             public void onSuccess(LoginResult loginResult) {
                 AccessToken fbToken = loginResult.getAccessToken();
-                String msg = "Token " + fbToken.getToken() + " userId " + fbToken.getUserId();
-//                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
                 tokenId = fbToken.getToken();
                 playerId = fbToken.getUserId();
 
@@ -164,6 +177,7 @@ public class LoginActivity extends AppCompatActivity implements
                                 if (responseObject != null) {
                                     try {
                                         playerName = responseObject.getString("name");
+                                        provider = FACEBOOK;
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -172,7 +186,6 @@ public class LoginActivity extends AppCompatActivity implements
                             }
                         }
                 ).executeAsync();
-
             }
 
             @Override
@@ -245,20 +258,19 @@ public class LoginActivity extends AppCompatActivity implements
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             String name = acct.getDisplayName();
-            String idToken = acct.getIdToken();
-            String msg = "Token " + idToken + " name " + name;
-//            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-            tokenId = idToken;
+            tokenId = acct.getIdToken();
             playerId = acct.getId();
             playerName = name;
+            provider = GOOGLE;
             loginSuccess();
         }
     }
 
-
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        Log.d("Google_SignIn", "onConnectionFailed:" + connectionResult.toString());
+        Toast.makeText(getApplicationContext(), "Google_SignIn_Connection Failed", Toast.LENGTH_LONG).show();
+        hideProgressDialog();
     }
 
     @Override
@@ -306,15 +318,66 @@ public class LoginActivity extends AppCompatActivity implements
         loginHandler.save(SharedPrefsHandler.LOGGED, SharedPrefsHandler.IS_LOGGED);
         loginHandler.save(SharedPrefsHandler.PLAYER_NAME, playerName);
         loginHandler.save(SharedPrefsHandler.PLAYER_ID, playerId);
+        loginHandler.save(SharedPrefsHandler.PROVIDER_ID, playerId);
         loginHandler.save(SharedPrefsHandler.TOKEN_ID, tokenId);
+        loginHandler.save(SharedPrefsHandler.LOGIN_PROVIDER, provider);
 
-        String msg = "Token " + tokenId + " userId " + playerId + " name "+playerName;
-        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-        Intent intent = new Intent();
-        intent.putExtra("playerId", playerId);
-        setResult(RESULT_OK, intent);
-        finish();
+        getPlayer(provider, playerId, playerName);
     }
+
+    private void getPlayer(String provider, String providerId, String displayName) {
+        UserApi userApi = RestClient.getUserApi();
+        Map<String, String> profile = new HashMap<>();
+        profile.put(SharedPrefsHandler.PROVIDER_ID, providerId);
+        profile.put(SharedPrefsHandler.PLAYER_NAME, displayName);
+        profile.put(SharedPrefsHandler.LOGIN_PROVIDER, provider);
+        userApi.loginPlayerOrCreate(profile, new retrofit.Callback<Player>() {
+            @Override
+            public void success(Player player, Response response) {
+                if (response != null) {
+                    List<Header> headers = response.getHeaders();
+                    for (Header header : headers) {
+                        String headerName = header.getName();
+                        if (SharedPrefsHandler.COOKIE.equals(headerName)) {
+                            loginHandler.save(SharedPrefsHandler.COOKIE, header.getValue());
+                            break;
+                        }
+                    }
+                    Intent intent = new Intent();
+                    intent.putExtra("player", player);
+                    setResult(RESULT_OK, intent);
+//                    finish();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (error != null) {
+                    Toast.makeText(getApplicationContext(), error.getUrl(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        GameApi gameApi = RestClient.getGameApi();
+
+        gameApi.getAllGames(new retrofit.Callback<List<Game>>() {
+            @Override
+            public void success(List<Game> games, Response response) {
+                if (response != null) {
+
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (error != null) {
+                    Toast.makeText(getApplicationContext(), error.getUrl(), Toast.LENGTH_LONG).show();
+                    Log.d("Response", error.getResponse().toString());
+                }
+            }
+        });
+    }
+
 
     /***
      * Google signIn

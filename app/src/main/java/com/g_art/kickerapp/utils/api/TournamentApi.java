@@ -1,4 +1,4 @@
-package com.g_art.kickerapp.utils;
+package com.g_art.kickerapp.utils.api;
 
 /**
  * Kicker App
