@@ -15,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,11 +63,12 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                 Context.MODE_PRIVATE);
         loginHandler = SharedPrefsHandler.getInstance(mPrefs);
 
+        setContentView(R.layout.activity_home);
+
         checkLogin();
 
 //        mSocket.connect();
 
-        setContentView(R.layout.activity_home);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -82,20 +84,12 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View header = navigationView.getHeaderView(0);
+
+        mTxtPlayerName = (TextView) header.findViewById(R.id.txt_nav_header_player_name);
+        mImgNavPlayerAvatar = (ImageView) header.findViewById(R.id.nav_header_player_avatar);
+        mImgNavPlayerAvatar.setOnClickListener(this);
         navigationView.setNavigationItemSelectedListener(this);
-        // Initialize the first fragment when the application first loads.
-        if (savedInstanceState == null) {
-//            navigationView.setCheckedItem(R.id.nav_camera);
-        }
-
-        mTxtPlayerName = (TextView) findViewById(R.id.txt_nav_header_player_name);
-        mImgNavPlayerAvatar = (ImageView) findViewById(R.id.nav_header_player_avatar);
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        Fragment fragment = new PlayerFragment();
-        ft.replace(R.id.contentContainer, fragment).commit();
-
     }
 
     private void checkLogin() {
@@ -126,8 +120,11 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                 player = data.getParcelableExtra("player");
 
                 mTxtPlayerName.setText(player.getDisplayName());
-                mImgNavPlayerAvatar.setOnClickListener(this);
                 //get player from server via id
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                Fragment fragment = new PlayerFragment();
+                ft.replace(R.id.contentContainer, fragment).commit();
             }
         }
     }
@@ -191,6 +188,9 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                 FragmentTransaction ft = fragmentManager.beginTransaction();
                 Fragment fragment = new PlayerFragment();
                 ft.replace(R.id.contentContainer, fragment).commit();
+
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
                 break;
         }
     }
