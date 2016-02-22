@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,8 +18,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.g_art.kickerapp.R;
+import com.g_art.kickerapp.fragment.GamesFragment;
+import com.g_art.kickerapp.fragment.PlayerFragment;
+import com.g_art.kickerapp.fragment.TournamentsFragment;
 import com.g_art.kickerapp.model.Player;
 import com.g_art.kickerapp.utils.prefs.SharedPrefsHandler;
 import com.github.nkzawa.socketio.client.IO;
@@ -29,18 +37,22 @@ import java.net.URISyntaxException;
  * Kicker App
  * Created by G_Art on 16/2/2016.
  */
-public class KickerAppActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class KickerAppActivity extends AppCompatActivity implements View.OnClickListener,
+        NavigationView.OnNavigationItemSelectedListener {
     private SharedPrefsHandler loginHandler;
     public static int LOGIN_REQUEST_CODE = 1;
+
+    private TextView mTxtPlayerName;
+    private ImageView mImgNavPlayerAvatar;
 
     private Player player;
 
     private Socket mSocket;
-    {
-        try {
-            mSocket = IO.socket("http://kickerapp-statistics19.rhcloud.com");
-        } catch (URISyntaxException e) {}
-    }
+//    {
+//        try {
+//            mSocket = IO.socket("http://kickerapp-statistics19.rhcloud.com");
+//        } catch (URISyntaxException e) {}
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +64,7 @@ public class KickerAppActivity extends AppCompatActivity implements NavigationVi
 
         checkLogin();
 
-        mSocket.connect();
+//        mSocket.connect();
 
         setContentView(R.layout.activity_home);
 
@@ -60,13 +72,7 @@ public class KickerAppActivity extends AppCompatActivity implements NavigationVi
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        fab.setOnClickListener(this);
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -77,6 +83,18 @@ public class KickerAppActivity extends AppCompatActivity implements NavigationVi
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        // Initialize the first fragment when the application first loads.
+        if (savedInstanceState == null) {
+//            navigationView.setCheckedItem(R.id.nav_camera);
+        }
+
+        mTxtPlayerName = (TextView) findViewById(R.id.txt_nav_header_player_name);
+        mImgNavPlayerAvatar = (ImageView) findViewById(R.id.nav_header_player_avatar);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        Fragment fragment = new PlayerFragment();
+        ft.replace(R.id.contentContainer, fragment).commit();
 
     }
 
@@ -89,7 +107,6 @@ public class KickerAppActivity extends AppCompatActivity implements NavigationVi
             //TODO getSession
         }
     }
-
 
     @Override
     public void onBackPressed() {
@@ -108,13 +125,12 @@ public class KickerAppActivity extends AppCompatActivity implements NavigationVi
             if (resultCode == RESULT_OK) {
                 player = data.getParcelableExtra("player");
 
+                mTxtPlayerName.setText(player.getDisplayName());
+                mImgNavPlayerAvatar.setOnClickListener(this);
                 //get player from server via id
-            } else if (resultCode == RESULT_CANCELED) {
-
             }
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -143,23 +159,39 @@ public class KickerAppActivity extends AppCompatActivity implements NavigationVi
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        Fragment fragment = null;
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+            fragment = new GamesFragment();
         } else if (id == R.id.nav_gallery) {
+            fragment = new TournamentsFragment();
+        }
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (null != fragment) {
+            ft.replace(R.id.contentContainer, fragment).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.fab:
+                Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                break;
+            case R.id.nav_header_player_avatar:
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                Fragment fragment = new PlayerFragment();
+                ft.replace(R.id.contentContainer, fragment).commit();
+                break;
+        }
     }
 }

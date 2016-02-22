@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/playerAvatar"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentStart="false"
+        android:layout_margin="25dp"
+        android:src="@mipmap/ic_launcher"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/player_name"
+        android:id="@+id/txtPlayerNameLabel"
+        android:layout_alignTop="@+id/playerAvatar"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="15dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/txtPlayerNameValue"
+        android:layout_below="@+id/txtPlayerNameLabel"
+        android:layout_alignEnd="@+id/txtPlayerNameLabel"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/games"
+        android:id="@+id/txtGameLabel"
+        android:layout_below="@+id/playerAvatar"
+        android:layout_marginTop="15dp"
+        android:autoText="false"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="25dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/txtGamesvalue"
+        android:layout_below="@+id/txtGameLabel"
+        android:layout_alignStart="@+id/txtGameLabel"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/wins"
+        android:id="@+id/txtWinsLabel"
+        android:layout_below="@+id/txtGamesvalue"
+        android:layout_alignStart="@+id/txtGamesvalue"
+        android:layout_marginTop="15dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/txtWinsValue"
+        android:layout_below="@+id/txtWinsLabel"
+        android:layout_alignStart="@+id/txtWinsLabel"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/losses"
+        android:id="@+id/txtLossesLabel"
+        android:layout_below="@+id/txtWinsValue"
+        android:layout_alignStart="@+id/txtWinsValue"
+        android:layout_marginTop="15dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/txtLossesValue"
+        android:layout_below="@+id/txtLossesLabel"
+        android:layout_alignStart="@+id/txtLossesLabel"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/achievements"
+        android:id="@+id/txtAchievementsLabel"
+        android:layout_below="@+id/txtLossesValue"
+        android:layout_alignStart="@+id/txtLossesValue"
+        android:layout_marginTop="25dp"/>
+
+</RelativeLayout>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    android:id="@+id/cv"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    app:cardCornerRadius="8dp">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        >
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cv_player1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="5dp"
+            app:cardCornerRadius="3dp"
+            android:layout_toLeftOf="@+id/game_vs">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/game_player1_avatar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:src="@android:drawable/sym_def_app_icon"
+                    />
+
+                <TextView
+                    android:id="@+id/game_player1_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/game_player1_avatar"
+                    android:layout_alignTop="@+id/game_player1_avatar"
+                    android:layout_toRightOf="@+id/game_player1_avatar"
+                    android:gravity="center_vertical"
+                    android:text="Player1"
+                    />
+
+            </RelativeLayout>
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cv_player2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="false"
+            android:layout_marginTop="5dp"
+            app:cardCornerRadius="3dp"
+            android:layout_below="@+id/cv_player1"
+            android:layout_alignRight="@+id/cv_player1">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/game_player2_avatar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:src="@android:drawable/sym_def_app_icon"
+                    android:layout_marginRight="5dp"
+                    />
+
+                <TextView
+                    android:id="@+id/game_player2_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="Player2"
+                    android:layout_alignTop="@+id/game_player2_avatar"
+                    android:layout_alignBottom="@+id/game_player2_avatar"
+                    android:layout_toRightOf="@+id/game_player2_avatar"/>
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <TextView
+            android:id="@+id/game_vs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VS"
+            android:padding="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignBottom="@+id/cv_player3"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/game_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0:0"
+            android:layout_below="@+id/game_vs"
+            android:layout_alignLeft="@+id/game_vs"
+            android:layout_alignRight="@+id/game_vs"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_alignTop="@+id/cv_player2"
+            android:padding="3dp"
+            android:textSize="15sp"/>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cv_player3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="5dp"
+            app:cardCornerRadius="3dp"
+            android:layout_alignParentStart="false"
+            android:layout_toRightOf="@+id/game_vs">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/game_player3_avatar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/sym_def_app_icon"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="5dp"/>
+
+                <TextView
+                    android:id="@+id/game_player3_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Player3"
+                    android:layout_alignTop="@+id/game_player3_avatar"
+                    android:layout_alignBottom="@+id/game_player3_avatar"
+                    android:layout_toLeftOf="@+id/game_player3_avatar"
+                    android:gravity="center_vertical"/>
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cv_player4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            app:cardCornerRadius="3dp"
+            android:layout_below="@+id/cv_player3"
+            android:layout_alignParentEnd="true"
+            android:layout_alignLeft="@+id/cv_player3">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/game_player4_avatar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/sym_def_app_icon"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="5dp"/>
+
+                <TextView
+                    android:id="@+id/game_player4_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="Player4"
+                    android:layout_alignTop="@+id/game_player4_avatar"
+                    android:layout_alignBottom="@+id/game_player4_avatar"
+                    android:layout_toLeftOf="@+id/game_player4_avatar"
+                    />
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

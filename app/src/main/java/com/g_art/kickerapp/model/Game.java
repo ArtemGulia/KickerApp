@@ -11,6 +11,7 @@ public class Game {
     private String _id;
     private Player createdBy;
     private String name;
+    private String score;
     private Date date;
     private List<Team> teams;
 
@@ -54,6 +55,14 @@ public class Game {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getScore() {
+        return score;
+    }
+
+    public void setScore(String score) {
+        this.score = score;
     }
 
     public Date getDate() {

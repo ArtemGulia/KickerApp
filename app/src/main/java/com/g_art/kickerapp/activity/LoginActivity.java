@@ -346,7 +346,8 @@ public class LoginActivity extends AppCompatActivity implements
                     Intent intent = new Intent();
                     intent.putExtra("player", player);
                     setResult(RESULT_OK, intent);
-//                    finish();
+                    hideProgressDialog();
+                    finish();
                 }
             }
 
@@ -358,24 +359,24 @@ public class LoginActivity extends AppCompatActivity implements
             }
         });
 
-        GameApi gameApi = RestClient.getGameApi();
-
-        gameApi.getAllGames(new retrofit.Callback<List<Game>>() {
-            @Override
-            public void success(List<Game> games, Response response) {
-                if (response != null) {
-
-                }
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                if (error != null) {
-                    Toast.makeText(getApplicationContext(), error.getUrl(), Toast.LENGTH_LONG).show();
-                    Log.d("Response", error.getResponse().toString());
-                }
-            }
-        });
+//        GameApi gameApi = RestClient.getGameApi();
+//
+//        gameApi.getAllGames(new retrofit.Callback<List<Game>>() {
+//            @Override
+//            public void success(List<Game> games, Response response) {
+//                if (response != null) {
+//
+//                }
+//            }
+//
+//            @Override
+//            public void failure(RetrofitError error) {
+//                if (error != null) {
+//                    Toast.makeText(getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+//                    Log.d("Response", error.getResponse().toString());
+//                }
+//            }
+//        });
     }
 
 

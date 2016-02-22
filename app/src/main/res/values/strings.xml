@@ -9,4 +9,16 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="preference_file_key">login_handler</string>
+
+    <!-- Player profile-->
+    <string name="player_name">Name:</string>
+    <string name="games">Games:</string>
+    <string name="wins">Wins:</string>
+    <string name="losses">Losses:</string>
+    <string name="achievements">Achievements:</string>
+
+    <!-- Navigation View-->
+    <string name="nav_games">Games</string>
+    <string name="nav_tournaments">Tournaments</string>
+
 </resources>
