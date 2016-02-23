@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<jp.co.recruit_lifestyle.android.widget.BeerSwipeRefreshLayout
+<android.support.v4.widget.SwipeRefreshLayout
     android:id="@+id/main_swipe"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -40,7 +40,6 @@
                 android:layout_alignEnd="@+id/txtPlayerNameLabel"
                 android:layout_below="@+id/txtPlayerNameLabel"
                 android:layout_marginTop="10dp"
-                android:text="Large Text"
                 android:textAppearance="?android:attr/textAppearanceLarge"/>
 
             <TextView
@@ -51,26 +50,24 @@
                 android:layout_below="@+id/playerAvatar"
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="15dp"
-                android:autoText="false"
                 android:text="@string/games"
                 android:textAppearance="?android:attr/textAppearanceMedium"/>
 
             <TextView
-                android:id="@+id/txtGamesvalue"
+                android:id="@+id/txtGamesValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignStart="@+id/txtGameLabel"
                 android:layout_below="@+id/txtGameLabel"
                 android:layout_marginTop="10dp"
-                android:text="Large Text"
                 android:textAppearance="?android:attr/textAppearanceLarge"/>
 
             <TextView
                 android:id="@+id/txtWinsLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/txtGamesvalue"
-                android:layout_below="@+id/txtGamesvalue"
+                android:layout_alignStart="@+id/txtGamesValue"
+                android:layout_below="@+id/txtGamesValue"
                 android:layout_marginTop="15dp"
                 android:text="@string/wins"
                 android:textAppearance="?android:attr/textAppearanceMedium"/>
@@ -82,7 +79,6 @@
                 android:layout_alignStart="@+id/txtWinsLabel"
                 android:layout_below="@+id/txtWinsLabel"
                 android:layout_marginTop="10dp"
-                android:text="Large Text"
                 android:textAppearance="?android:attr/textAppearanceLarge"/>
 
             <TextView
@@ -102,7 +98,6 @@
                 android:layout_alignStart="@+id/txtLossesLabel"
                 android:layout_below="@+id/txtLossesLabel"
                 android:layout_marginTop="10dp"
-                android:text="Large Text"
                 android:textAppearance="?android:attr/textAppearanceLarge"/>
 
             <TextView
@@ -117,4 +112,4 @@
 
         </RelativeLayout>
     </ScrollView>
-</jp.co.recruit_lifestyle.android.widget.BeerSwipeRefreshLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

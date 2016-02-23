@@ -1,5 +1,6 @@
 package com.g_art.kickerapp.fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -37,6 +38,7 @@ public class GamesFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private GamesViewAdapter mAdapter;
+    private ProgressDialog mProgressDialog;
 
     public GamesFragment() {}
 
@@ -58,6 +60,7 @@ public class GamesFragment extends Fragment {
         // 5. set item animator to DefaultAnimator
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
+        showProgressDialog();
         requestForData();
 
         return view;
@@ -71,6 +74,7 @@ public class GamesFragment extends Fragment {
             public void success(List<Game> games, Response response) {
                 if (response != null) {
                     mAdapter.updateData(games);
+                    hideProgressDialog();
                     mAdapter.notifyDataSetChanged();
                 }
             }
@@ -78,10 +82,29 @@ public class GamesFragment extends Fragment {
             @Override
             public void failure(RetrofitError error) {
                 if (error != null) {
+                    hideProgressDialog();
                     Toast.makeText(getActivity(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                     Log.d("Response", error.getResponse().toString());
                 }
             }
         });
+    }
+
+
+
+    private void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(getActivity());
+            mProgressDialog.setMessage(getString(R.string.loading));
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.hide();
+        }
     }
 }

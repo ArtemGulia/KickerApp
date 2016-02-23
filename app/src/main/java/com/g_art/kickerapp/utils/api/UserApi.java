@@ -17,7 +17,7 @@ import retrofit.http.POST;
 public interface UserApi {
 
     @GET("/auth/user")
-    Player authUser();
+    void authUser(Callback<Player> callback);
 
     @POST("")
     void getPlayer(@Body String providerId, @Body String provider, @Body String displayName, Callback<Player> callback);

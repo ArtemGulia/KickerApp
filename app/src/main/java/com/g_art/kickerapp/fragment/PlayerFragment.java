@@ -5,13 +5,26 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.g_art.kickerapp.R;
+import com.g_art.kickerapp.model.Player;
+import com.g_art.kickerapp.utils.api.UserApi;
+import com.g_art.kickerapp.utils.prefs.SharedPrefsHandler;
+import com.g_art.kickerapp.utils.rest.RestClient;
+
+import java.lang.ref.WeakReference;
+import java.util.List;
 
 import jp.co.recruit_lifestyle.android.widget.BeerSwipeRefreshLayout;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Header;
+import retrofit.client.Response;
 
 /**
  * Kicker App
@@ -19,8 +32,14 @@ import jp.co.recruit_lifestyle.android.widget.BeerSwipeRefreshLayout;
  */
 public class PlayerFragment extends Fragment {
 
+    public static final String PLAYER_KEY = "player";
     private View view;
-    private BeerSwipeRefreshLayout mBeerSwipeRefreshLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private Player mPlayer;
+    private TextView mTxtPlayerName;
+    private TextView mTxtGames;
+    private TextView mTxtWins;
+    private TextView mTxtLosses;
 
     public PlayerFragment() {}
 
@@ -30,30 +49,79 @@ public class PlayerFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_player_profile, container, false);
         // keep the fragment and all its data across screen rotation
         setRetainInstance(true);
+        boolean checkArgs = true;
 
-
-        mBeerSwipeRefreshLayout = (BeerSwipeRefreshLayout) view.findViewById(R.id.main_swipe);
-        mBeerSwipeRefreshLayout.setOnRefreshListener(new BeerSwipeRefreshLayout.OnRefreshListener() {
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.main_swipe);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // Do work to refresh the list here.
-                new Task().execute();
+                // Refresh items
+                loadPlayer();
             }
         });
+
+        mTxtPlayerName = (TextView) view.findViewById(R.id.txtPlayerNameValue);
+        mTxtGames = (TextView) view.findViewById(R.id.txtGamesValue);
+        mTxtWins = (TextView) view.findViewById(R.id.txtWinsValue);
+        mTxtLosses = (TextView) view.findViewById(R.id.txtLossesValue);
+
+        if (savedInstanceState != null) {
+            mPlayer = getArguments().getParcelable(PLAYER_KEY);
+            updateUI();
+            checkArgs = false;
+        }
+
+        if (checkArgs && getArguments() != null) {
+            mPlayer = getArguments().getParcelable(PLAYER_KEY);
+            updateUI();
+        }
+
+        if (null == mPlayer) {
+            loadPlayer();
+        }
+
         return view;
     }
 
-    private class Task extends AsyncTask<Void, Void, String[]> {
-        @Override
-        protected String[] doInBackground(Void... params) {
-            return new String[0];
-        }
+    private void loadPlayer() {
+        UserApi userApi = RestClient.getUserApi();
+        userApi.authUser(new Callback<Player>() {
+            @Override
+            public void success(Player player, Response response) {
 
-        @Override protected void onPostExecute(String[] result) {
-            // Call setRefreshing(false) when the list has been refreshed.
+                List<Header> headers = response.getHeaders();
+                for (Header header : headers) {
+                    String headerName = header.getName();
+                    if (SharedPrefsHandler.COOKIE.equals(headerName)) {
+                        String cookie = header.getValue();
+                        RestClient.setsSessionId(cookie);
+                    }
+                }
 
-            mBeerSwipeRefreshLayout.setRefreshing(false);
-            super.onPostExecute(result);
+                mPlayer = player;
+                onItemsLoadComplete();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+
+    private void updateUI() {
+        if (mPlayer != null) {
+            mTxtPlayerName.setText(mPlayer.getDisplayName());
+            mTxtGames.setText(""+mPlayer.getGames());
+            mTxtWins.setText(""+mPlayer.getWins());
+            mTxtLosses.setText(""+mPlayer.getLosses());
         }
+    }
+
+    void onItemsLoadComplete() {
+        // Update the UI and notify data set changed
+        updateUI();
+        // Stop refresh animation
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 }

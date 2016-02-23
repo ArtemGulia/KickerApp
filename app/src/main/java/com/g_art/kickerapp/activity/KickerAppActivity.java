@@ -177,8 +177,11 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(FRAGMENT_TAG);
         if (fragment == null) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(PlayerFragment.PLAYER_KEY, player);
             FragmentTransaction ft = fragmentManager.beginTransaction();
             fragment = new PlayerFragment();
+            fragment.setArguments(bundle);
             ft.add(R.id.contentContainer, fragment, FRAGMENT_TAG).commit();
         }
     }
@@ -251,9 +254,13 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void openPlayerProfileFromNV() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(PlayerFragment.PLAYER_KEY, player);
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         Fragment fragment = new PlayerFragment();
+        fragment.setArguments(bundle);
         ft.replace(R.id.contentContainer, fragment).commit();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
