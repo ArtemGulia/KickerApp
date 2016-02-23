@@ -15,23 +15,33 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.g_art.kickerapp.R;
 import com.g_art.kickerapp.fragment.GamesFragment;
 import com.g_art.kickerapp.fragment.PlayerFragment;
 import com.g_art.kickerapp.fragment.TournamentsFragment;
 import com.g_art.kickerapp.model.Player;
+import com.g_art.kickerapp.utils.api.UserApi;
 import com.g_art.kickerapp.utils.prefs.SharedPrefsHandler;
+import com.g_art.kickerapp.utils.rest.RestClient;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
-import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Header;
+import retrofit.client.Response;
 
 
 /**
@@ -42,6 +52,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         NavigationView.OnNavigationItemSelectedListener {
     private SharedPrefsHandler loginHandler;
     public static int LOGIN_REQUEST_CODE = 1;
+    public final static String FRAGMENT_TAG = "Fragment_Tag";
 
     private TextView mTxtPlayerName;
     private ImageView mImgNavPlayerAvatar;
@@ -85,6 +96,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View header = navigationView.getHeaderView(0);
+        header.setOnClickListener(this);
 
         mTxtPlayerName = (TextView) header.findViewById(R.id.txt_nav_header_player_name);
         mImgNavPlayerAvatar = (ImageView) header.findViewById(R.id.nav_header_player_avatar);
@@ -99,6 +111,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
             startActivityForResult(loginIntent, LOGIN_REQUEST_CODE);
         } else {
             //TODO getSession
+            authorizeUser();
         }
     }
 
@@ -118,14 +131,55 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         if (requestCode == LOGIN_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 player = data.getParcelableExtra("player");
-
-                mTxtPlayerName.setText(player.getDisplayName());
-                //get player from server via id
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction ft = fragmentManager.beginTransaction();
-                Fragment fragment = new PlayerFragment();
-                ft.replace(R.id.contentContainer, fragment).commit();
+                openPlayerProfile(player);
             }
+        }
+    }
+
+    private void authorizeUser() {
+        UserApi userApi = RestClient.getUserApi();
+        Map<String, ?> profileCash = loginHandler.getAll();
+        Map<String, String> profile = new HashMap<>();
+        profile.put(SharedPrefsHandler.PROVIDER_ID,
+                profileCash.get(SharedPrefsHandler.PROVIDER_ID).toString());
+        profile.put(SharedPrefsHandler.PLAYER_NAME,
+                profileCash.get(SharedPrefsHandler.PLAYER_NAME).toString());
+        profile.put(SharedPrefsHandler.LOGIN_PROVIDER,
+                profileCash.get(SharedPrefsHandler.LOGIN_PROVIDER).toString());
+
+        userApi.loginPlayerOrCreate(profile, new Callback<Player>() {
+            @Override
+            public void success(Player player, Response response) {
+                List<Header> headers = response.getHeaders();
+                for (Header header : headers) {
+                    String headerName = header.getName();
+                    if (SharedPrefsHandler.COOKIE.equals(headerName)) {
+                        String cookie = header.getValue();
+                        RestClient.setsSessionId(cookie);
+                    }
+                }
+                openPlayerProfile(player);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (error != null) {
+                    Toast.makeText(getApplicationContext(), error.getUrl(),
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void openPlayerProfile(Player player) {
+        mTxtPlayerName.setText(player.getDisplayName());
+        //get player from server via id
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(FRAGMENT_TAG);
+        if (fragment == null) {
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            fragment = new PlayerFragment();
+            ft.add(R.id.contentContainer, fragment, FRAGMENT_TAG).commit();
         }
     }
 
@@ -156,6 +210,10 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+
+        // now set clicked menu item to checked
+        item.setChecked(true);
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         Fragment fragment = null;
@@ -167,7 +225,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         }
 
         if (null != fragment) {
-            ft.replace(R.id.contentContainer, fragment).commit();
+            ft.replace(R.id.contentContainer, fragment, FRAGMENT_TAG).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -184,14 +242,40 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                         .setAction("Action", null).show();
                 break;
             case R.id.nav_header_player_avatar:
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction ft = fragmentManager.beginTransaction();
-                Fragment fragment = new PlayerFragment();
-                ft.replace(R.id.contentContainer, fragment).commit();
-
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
+                openPlayerProfileFromNV();
                 break;
+            case R.id.nav_header:
+                openPlayerProfileFromNV();
+                break;
+        }
+    }
+
+    private void openPlayerProfileFromNV() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        Fragment fragment = new PlayerFragment();
+        ft.replace(R.id.contentContainer, fragment).commit();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        uncheckAllMenuItems(navigationView);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+    }
+
+    private void uncheckAllMenuItems(NavigationView navigationView) {
+        final Menu menu = navigationView.getMenu();
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem item = menu.getItem(i);
+            if (item.hasSubMenu()) {
+                SubMenu subMenu = item.getSubMenu();
+                for (int j = 0; j < subMenu.size(); j++) {
+                    MenuItem subMenuItem = subMenu.getItem(j);
+                    subMenuItem.setChecked(false);
+                }
+            } else {
+                item.setChecked(false);
+            }
         }
     }
 }

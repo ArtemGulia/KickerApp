@@ -25,8 +25,8 @@ import com.facebook.login.widget.LoginButton;
 import com.g_art.kickerapp.R;
 import com.g_art.kickerapp.model.Game;
 import com.g_art.kickerapp.model.Player;
-import com.g_art.kickerapp.utils.RestClient;
 import com.g_art.kickerapp.utils.api.GameApi;
+import com.g_art.kickerapp.utils.rest.RestClient;
 import com.g_art.kickerapp.utils.prefs.SharedPrefsHandler;
 import com.g_art.kickerapp.utils.api.UserApi;
 import com.google.android.gms.auth.api.Auth;
@@ -59,7 +59,6 @@ import io.fabric.sdk.android.Fabric;
 import retrofit.RetrofitError;
 import retrofit.client.Header;
 import retrofit.client.Response;
-import retrofit.http.Headers;
 
 /**
  * A login screen that offers login via email/password.
@@ -339,10 +338,11 @@ public class LoginActivity extends AppCompatActivity implements
                     for (Header header : headers) {
                         String headerName = header.getName();
                         if (SharedPrefsHandler.COOKIE.equals(headerName)) {
-                            loginHandler.save(SharedPrefsHandler.COOKIE, header.getValue());
-                            break;
+                            String cookie = header.getValue();
+                            RestClient.setsSessionId(cookie);
                         }
                     }
+
                     Intent intent = new Intent();
                     intent.putExtra("player", player);
                     setResult(RESULT_OK, intent);
@@ -359,24 +359,7 @@ public class LoginActivity extends AppCompatActivity implements
             }
         });
 
-//        GameApi gameApi = RestClient.getGameApi();
-//
-//        gameApi.getAllGames(new retrofit.Callback<List<Game>>() {
-//            @Override
-//            public void success(List<Game> games, Response response) {
-//                if (response != null) {
-//
-//                }
-//            }
-//
-//            @Override
-//            public void failure(RetrofitError error) {
-//                if (error != null) {
-//                    Toast.makeText(getApplicationContext(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-//                    Log.d("Response", error.getResponse().toString());
-//                }
-//            }
-//        });
+
     }
 
 

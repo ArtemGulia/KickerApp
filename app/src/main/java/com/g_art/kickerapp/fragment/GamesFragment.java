@@ -6,18 +6,26 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.g_art.kickerapp.R;
 import com.g_art.kickerapp.adapter.GamesViewAdapter;
 import com.g_art.kickerapp.model.Game;
 import com.g_art.kickerapp.model.Player;
 import com.g_art.kickerapp.model.Team;
+import com.g_art.kickerapp.utils.api.GameApi;
+import com.g_art.kickerapp.utils.rest.RestClient;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Kicker App
@@ -28,8 +36,7 @@ public class GamesFragment extends Fragment {
     private View view;
 
     private RecyclerView mRecyclerView;
-    private GamesViewAdapter mGamesViewAdapter;
-    private LinearLayoutManager mLinearLayoutManager;
+    private GamesViewAdapter mAdapter;
 
     public GamesFragment() {}
 
@@ -37,45 +44,44 @@ public class GamesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_games_list, container, false);
-
-        // Set some data
-
-        List<Game> itemsData = new ArrayList<>();
-
-        for (int i = 0; i < 20; i++ ) {
-            Game game = new Game();
-            List<Team> teams = new ArrayList<>();
-            for (int y = 0; y < 2; y++) {
-                Team team = new Team();
-                List<Player> teamPlayers = new ArrayList<>();
-                for (int j = 0; j < 2; j ++) {
-                    Player player = new Player("id", "player"+y+""+j);
-                    teamPlayers.add(player);
-                }
-                team.setPlayerList(teamPlayers);
-                teams.add(team);
-            }
-            if (i<=10) {
-                game.setScore("0:"+i);
-            } else {
-                game.setScore(""+i+":0");
-            }
-            game.setTeams(teams);
-            itemsData.add(game);
-        }
-
+        // keep the fragment and all its data across screen rotation
+        setRetainInstance(true);
 
         // 1. get a reference to recyclerView
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.rv_games_list);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_games_list);
         // 2. set layoutManger
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         // 3. create an adapter
-        GamesViewAdapter mAdapter = new GamesViewAdapter(itemsData);
+        mAdapter = new GamesViewAdapter(Collections.<Game>emptyList());
         // 4. set adapter
-        recyclerView.setAdapter(mAdapter);
+        mRecyclerView.setAdapter(mAdapter);
         // 5. set item animator to DefaultAnimator
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        requestForData();
 
         return view;
+    }
+
+    private void requestForData() {
+        GameApi gameApi = RestClient.getGameApi();
+
+        gameApi.getAllGames(new retrofit.Callback<List<Game>>() {
+            @Override
+            public void success(List<Game> games, Response response) {
+                if (response != null) {
+                    mAdapter.updateData(games);
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                if (error != null) {
+                    Toast.makeText(getActivity(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                    Log.d("Response", error.getResponse().toString());
+                }
+            }
+        });
     }
 }

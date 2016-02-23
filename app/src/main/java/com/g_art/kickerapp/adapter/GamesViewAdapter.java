@@ -51,7 +51,8 @@ public class GamesViewAdapter extends RecyclerView.Adapter<GamesViewAdapter.View
             holder.txtPlayer4Name.setText(team2.getPlayerList().get(1).getDisplayName());
 
             //Set Game Score
-            holder.txtGameScore.setText(game.getScore());
+            String score = team1.getScore() + ":" + team2.getScore();
+            holder.txtGameScore.setText(score);
         }
     }
 
@@ -61,6 +62,10 @@ public class GamesViewAdapter extends RecyclerView.Adapter<GamesViewAdapter.View
             return 0;
         }
         return gameList.size();
+    }
+
+    public void updateData(List<Game> gameList) {
+        this.gameList = gameList;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
