@@ -46,7 +46,6 @@ public class PlayerFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_player_profile, container, false);
         // keep the fragment and all its data across screen rotation
         setRetainInstance(true);
-        boolean checkArgs = true;
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.player_profile_swipe);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -62,13 +61,7 @@ public class PlayerFragment extends Fragment {
         mTxtWins = (TextView) view.findViewById(R.id.txtWinsValue);
         mTxtLosses = (TextView) view.findViewById(R.id.txtLossesValue);
 
-        if (savedInstanceState != null) {
-            mPlayer = getArguments().getParcelable(PLAYER_KEY);
-            updateUI();
-            checkArgs = false;
-        }
-
-        if (checkArgs && getArguments() != null) {
+        if (getArguments() != null) {
             mPlayer = getArguments().getParcelable(PLAYER_KEY);
             updateUI();
         }
@@ -78,6 +71,24 @@ public class PlayerFragment extends Fragment {
         }
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mPlayer = getArguments().getParcelable(PLAYER_KEY);
+            updateUI();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        //Save the fragment's state here
+        outState.putParcelable(PLAYER_KEY, mPlayer);
     }
 
     private void loadPlayer() {

@@ -24,14 +24,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.g_art.kickerapp.R;
-import com.g_art.kickerapp.fragment.GamesFragment;
+import com.g_art.kickerapp.fragment.game.GamesFragment;
 import com.g_art.kickerapp.fragment.PlayerFragment;
 import com.g_art.kickerapp.fragment.TournamentsFragment;
 import com.g_art.kickerapp.model.Player;
 import com.g_art.kickerapp.utils.api.UserApi;
 import com.g_art.kickerapp.utils.prefs.SharedPrefsHandler;
 import com.g_art.kickerapp.utils.rest.RestClient;
-import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
 import java.util.HashMap;
@@ -57,6 +56,8 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     private TextView mTxtPlayerName;
     private ImageView mImgNavPlayerAvatar;
 
+    private Fragment mFragment;
+
     private Player player;
 
     private Socket mSocket;
@@ -76,7 +77,12 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 
         setContentView(R.layout.activity_home);
 
-        checkLogin();
+        if (savedInstanceState != null) {
+            //Restore the fragment's instance
+            mFragment = getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_TAG);
+        } else {
+            checkLogin();
+        }
 
 //        mSocket.connect();
 
@@ -123,6 +129,16 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         } else {
             super.onBackPressed();
         }
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        //Save the fragment's instance
+
+        getSupportFragmentManager().putFragment(outState, FRAGMENT_TAG, mFragment);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -181,8 +197,11 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
             bundle.putParcelable(PlayerFragment.PLAYER_KEY, player);
             FragmentTransaction ft = fragmentManager.beginTransaction();
             fragment = new PlayerFragment();
+            mFragment = fragment;
             fragment.setArguments(bundle);
-            ft.add(R.id.contentContainer, fragment, FRAGMENT_TAG).commit();
+            ft.replace(R.id.contentContainer, fragment, FRAGMENT_TAG).commit();
+        } else{
+            mFragment = fragment;
         }
     }
 
@@ -228,6 +247,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         }
 
         if (null != fragment) {
+            mFragment = fragment;
             ft.replace(R.id.contentContainer, fragment, FRAGMENT_TAG).commit();
         }
 
@@ -261,6 +281,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         FragmentTransaction ft = fragmentManager.beginTransaction();
         Fragment fragment = new PlayerFragment();
         fragment.setArguments(bundle);
+        mFragment = fragment;
         ft.replace(R.id.contentContainer, fragment).commit();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
