@@ -33,6 +33,7 @@ android {
 repositories {
     mavenCentral()
     maven { url 'https://maven.fabric.io/public' }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -43,8 +44,14 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
 
+    //Animation
+//    compile 'jp.wasabeef:recyclerview-animators:2.2.0'
+
+    //Swipe To Refresh
+    compile 'com.github.recruit-lifestyle:BeerSwipeRefresh:1.1'
+
     //Database
-//    compile 'io.realm:realm-android:0.87.4'
+    compile 'io.realm:realm-android:0.87.4'
 
     //External Support Libraries
     compile 'com.github.nkzawa:socket.io-client:0.3.0'

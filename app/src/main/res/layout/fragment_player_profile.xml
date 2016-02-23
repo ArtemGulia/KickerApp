@@ -1,108 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<jp.co.recruit_lifestyle.android.widget.BeerSwipeRefreshLayout
+    android:id="@+id/main_swipe"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/playerAvatar"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentStart="false"
-        android:layout_margin="25dp"
-        android:src="@mipmap/ic_launcher"
-        />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/player_name"
-        android:id="@+id/txtPlayerNameLabel"
-        android:layout_alignTop="@+id/playerAvatar"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="15dp"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/txtPlayerNameValue"
-        android:layout_below="@+id/txtPlayerNameLabel"
-        android:layout_alignEnd="@+id/txtPlayerNameLabel"
-        android:layout_marginTop="10dp"/>
+            <ImageView
+                android:id="@+id/playerAvatar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="false"
+                android:layout_alignParentTop="false"
+                android:layout_margin="25dp"
+                android:src="@mipmap/ic_launcher"
+                />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/games"
-        android:id="@+id/txtGameLabel"
-        android:layout_below="@+id/playerAvatar"
-        android:layout_marginTop="15dp"
-        android:autoText="false"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="25dp"/>
+            <TextView
+                android:id="@+id/txtPlayerNameLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@+id/playerAvatar"
+                android:layout_marginRight="15dp"
+                android:text="@string/player_name"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/txtGamesvalue"
-        android:layout_below="@+id/txtGameLabel"
-        android:layout_alignStart="@+id/txtGameLabel"
-        android:layout_marginTop="10dp"/>
+            <TextView
+                android:id="@+id/txtPlayerNameValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/txtPlayerNameLabel"
+                android:layout_below="@+id/txtPlayerNameLabel"
+                android:layout_marginTop="10dp"
+                android:text="Large Text"
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/wins"
-        android:id="@+id/txtWinsLabel"
-        android:layout_below="@+id/txtGamesvalue"
-        android:layout_alignStart="@+id/txtGamesvalue"
-        android:layout_marginTop="15dp"/>
+            <TextView
+                android:id="@+id/txtGameLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/playerAvatar"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="15dp"
+                android:autoText="false"
+                android:text="@string/games"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/txtWinsValue"
-        android:layout_below="@+id/txtWinsLabel"
-        android:layout_alignStart="@+id/txtWinsLabel"
-        android:layout_marginTop="10dp"/>
+            <TextView
+                android:id="@+id/txtGamesvalue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/txtGameLabel"
+                android:layout_below="@+id/txtGameLabel"
+                android:layout_marginTop="10dp"
+                android:text="Large Text"
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/losses"
-        android:id="@+id/txtLossesLabel"
-        android:layout_below="@+id/txtWinsValue"
-        android:layout_alignStart="@+id/txtWinsValue"
-        android:layout_marginTop="15dp"/>
+            <TextView
+                android:id="@+id/txtWinsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/txtGamesvalue"
+                android:layout_below="@+id/txtGamesvalue"
+                android:layout_marginTop="15dp"
+                android:text="@string/wins"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/txtLossesValue"
-        android:layout_below="@+id/txtLossesLabel"
-        android:layout_alignStart="@+id/txtLossesLabel"
-        android:layout_marginTop="10dp"/>
+            <TextView
+                android:id="@+id/txtWinsValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/txtWinsLabel"
+                android:layout_below="@+id/txtWinsLabel"
+                android:layout_marginTop="10dp"
+                android:text="Large Text"
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/achievements"
-        android:id="@+id/txtAchievementsLabel"
-        android:layout_below="@+id/txtLossesValue"
-        android:layout_alignStart="@+id/txtLossesValue"
-        android:layout_marginTop="25dp"/>
+            <TextView
+                android:id="@+id/txtLossesLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/txtWinsValue"
+                android:layout_below="@+id/txtWinsValue"
+                android:layout_marginTop="15dp"
+                android:text="@string/losses"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-</RelativeLayout>
+            <TextView
+                android:id="@+id/txtLossesValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/txtLossesLabel"
+                android:layout_below="@+id/txtLossesLabel"
+                android:layout_marginTop="10dp"
+                android:text="Large Text"
+                android:textAppearance="?android:attr/textAppearanceLarge"/>
+
+            <TextView
+                android:id="@+id/txtAchievementsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/txtLossesValue"
+                android:layout_below="@+id/txtLossesValue"
+                android:layout_marginTop="25dp"
+                android:text="@string/achievements"
+                android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+        </RelativeLayout>
+    </ScrollView>
+</jp.co.recruit_lifestyle.android.widget.BeerSwipeRefreshLayout>
