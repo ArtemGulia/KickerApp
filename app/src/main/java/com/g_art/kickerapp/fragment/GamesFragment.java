@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +40,7 @@ public class GamesFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private GamesViewAdapter mAdapter;
     private ProgressDialog mProgressDialog;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public GamesFragment() {}
 
@@ -48,6 +50,15 @@ public class GamesFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_games_list, container, false);
         // keep the fragment and all its data across screen rotation
         setRetainInstance(true);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.game_list_swipe);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Refresh items
+                requestForData();
+            }
+        });
 
         // 1. get a reference to recyclerView
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_games_list);
@@ -74,6 +85,7 @@ public class GamesFragment extends Fragment {
             public void success(List<Game> games, Response response) {
                 if (response != null) {
                     mAdapter.updateData(games);
+                    onItemsLoadComplete();
                     hideProgressDialog();
                     mAdapter.notifyDataSetChanged();
                 }
@@ -82,6 +94,7 @@ public class GamesFragment extends Fragment {
             @Override
             public void failure(RetrofitError error) {
                 if (error != null) {
+                    onItemsLoadComplete();
                     hideProgressDialog();
                     Toast.makeText(getActivity(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                     Log.d("Response", error.getResponse().toString());
@@ -90,7 +103,13 @@ public class GamesFragment extends Fragment {
         });
     }
 
+    void onItemsLoadComplete() {
+        // Stop refresh animation
+        mSwipeRefreshLayout.setRefreshing(false);
 
+        // Update the UI and notify data set changed
+        mAdapter.notifyDataSetChanged();
+    }
 
     private void showProgressDialog() {
         if (mProgressDialog == null) {

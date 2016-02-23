@@ -1,7 +1,6 @@
 package com.g_art.kickerapp.fragment;
 
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,10 +16,8 @@ import com.g_art.kickerapp.utils.api.UserApi;
 import com.g_art.kickerapp.utils.prefs.SharedPrefsHandler;
 import com.g_art.kickerapp.utils.rest.RestClient;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
-import jp.co.recruit_lifestyle.android.widget.BeerSwipeRefreshLayout;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Header;
@@ -51,7 +48,7 @@ public class PlayerFragment extends Fragment {
         setRetainInstance(true);
         boolean checkArgs = true;
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.main_swipe);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.player_profile_swipe);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
