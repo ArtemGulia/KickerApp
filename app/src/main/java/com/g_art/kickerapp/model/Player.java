@@ -14,6 +14,7 @@ public class Player implements Parcelable {
     private String displayName;
     private String provider;
     private String providerId;
+    private String image;
     private int games;
     private int wins;
     private int losses;
@@ -70,6 +71,7 @@ public class Player implements Parcelable {
         this.displayName = in.readString();
         this.provider = in.readString();
         this.providerId = in.readString();
+        this.image = in.readString();
         this.games = in.readInt();
         this.wins = in.readInt();
         this.losses = in.readInt();
@@ -105,6 +107,14 @@ public class Player implements Parcelable {
 
     public void setProviderId(String providerId) {
         this.providerId = providerId;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public int getGames() {
@@ -150,6 +160,7 @@ public class Player implements Parcelable {
         dest.writeString(displayName);
         dest.writeString(provider);
         dest.writeString(providerId);
+        dest.writeString(image);
         dest.writeInt(games);
         dest.writeInt(wins);
         dest.writeInt(losses);
