@@ -39,9 +39,7 @@ public class GamesFragment extends Fragment {
     private View view;
 
     private RecyclerView mRecyclerView;
-    private ProgressBar mProgressBar;
     private GamesViewAdapter mAdapter;
-    private ProgressDialog mProgressDialog;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public GamesFragment() {}
@@ -53,7 +51,6 @@ public class GamesFragment extends Fragment {
         // keep the fragment and all its data across screen rotation
         setRetainInstance(true);
 
-//        mProgressBar = (ProgressBar) view.findViewById(R.id.game_list_progress);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.game_list_swipe);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -74,8 +71,6 @@ public class GamesFragment extends Fragment {
         // 5. set item animator to DefaultAnimator
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-//        mRecyclerView.setVisibility(View.GONE);
-//        showProgressDialog();
         requestForData();
 
         return view;
@@ -90,7 +85,7 @@ public class GamesFragment extends Fragment {
                 if (response != null) {
                     mAdapter.updateData(games);
                     onItemsLoadComplete();
-//                    hideProgressDialog();
+                    mAdapter.notifyItemRangeChanged(0, games.size());
                 }
             }
 
@@ -98,7 +93,6 @@ public class GamesFragment extends Fragment {
             public void failure(RetrofitError error) {
                 if (error != null) {
                     onItemsLoadComplete();
-//                    hideProgressDialog();
                     Toast.makeText(getActivity(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                     Log.d("Response", error.getResponse().toString());
                 }
@@ -110,9 +104,10 @@ public class GamesFragment extends Fragment {
         // Stop refresh animation
         mSwipeRefreshLayout.setRefreshing(false);
 
-//        mProgressBar.setVisibility(View.GONE);
-//        mRecyclerView.setVisibility(View.VISIBLE);
         // Update the UI and notify data set changed
-        mAdapter.notifyDataSetChanged();
+//        mAdapter.notifyDataSetChanged();
+        //this line below gives you the animation and also updates the
+        //list items after the deleted item
+//        mAdapter.notifyItemRangeChanged(0, getItemCount());
     }
 }
