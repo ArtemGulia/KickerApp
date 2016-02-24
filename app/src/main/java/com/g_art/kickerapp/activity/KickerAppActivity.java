@@ -91,13 +91,11 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 
 //        mSocket.connect();
 
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -180,6 +178,10 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                         RestClient.setsSessionId(cookie);
                     }
                 }
+
+                Snackbar.make(findViewById(R.id.contentContainer), player.getDisplayName(),
+                        Snackbar.LENGTH_LONG).show();
+
                 openPlayerProfile(player);
             }
 
