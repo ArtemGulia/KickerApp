@@ -89,7 +89,6 @@ public class GamesFragment extends Fragment {
                 if (error != null) {
                     onItemsLoadComplete();
                     Toast.makeText(getActivity(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                    Log.d("Response", error.getResponse().toString());
                 }
             }
         });

@@ -159,6 +159,9 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                 mPlayer = data.getParcelableExtra("player");
                 signUp = false;
                 openPlayerProfile(mPlayer);
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(getApplicationContext(), data.getStringExtra("resultMsg"),
+                        Toast.LENGTH_LONG).show();
             }
         }
     }

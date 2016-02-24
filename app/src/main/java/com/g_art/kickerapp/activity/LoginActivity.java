@@ -66,6 +66,7 @@ import retrofit.client.Response;
 public class LoginActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, OnClickListener {
 
+    public static final String SOMETHING_GOES_WRONG = "Something goes wrong";
     private String playerId;
     private String playerName;
     private String provider;
@@ -149,7 +150,11 @@ public class LoginActivity extends AppCompatActivity implements
             public void failure(TwitterException exception) {
                 Log.d("TwitterKit", "Login with Twitter failure", exception);
                 Toast.makeText(getApplicationContext(), "Twitter Login Failed", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent();
+                intent.putExtra("resultMsg", SOMETHING_GOES_WRONG);
+                setResult(RESULT_CANCELED, intent);
                 hideProgressDialog();
+                finish();
             }
         });
     }
@@ -190,12 +195,21 @@ public class LoginActivity extends AppCompatActivity implements
             @Override
             public void onCancel() {
                 Log.d("FaceBookSDK", "Login with Facebook failure", null);
-
+                Intent intent = new Intent();
+                intent.putExtra("resultMsg", SOMETHING_GOES_WRONG);
+                setResult(RESULT_CANCELED, intent);
+                hideProgressDialog();
+                finish();
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.d("FaceBookSDK", "Login with Facebook failure", error);
+                Intent intent = new Intent();
+                intent.putExtra("resultMsg", SOMETHING_GOES_WRONG);
+                setResult(RESULT_CANCELED, intent);
+                hideProgressDialog();
+                finish();
             }
         });
     }
@@ -267,8 +281,9 @@ public class LoginActivity extends AppCompatActivity implements
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d("Google_SignIn", "onConnectionFailed:" + connectionResult.toString());
-        Toast.makeText(getApplicationContext(), "Google_SignIn_Connection Failed", Toast.LENGTH_LONG).show();
+        Log.d("Google_SignIn", "onConnectionFailed:" + connectionResult.getErrorMessage());
+        Toast.makeText(getApplicationContext(), "Google_SignIn_Connection Failed : "+
+                connectionResult.getErrorMessage(), Toast.LENGTH_LONG).show();
         hideProgressDialog();
     }
 
@@ -354,6 +369,11 @@ public class LoginActivity extends AppCompatActivity implements
             @Override
             public void failure(RetrofitError error) {
                 if (error != null) {
+                    Intent intent = new Intent();
+                    intent.putExtra("resultMsg", SOMETHING_GOES_WRONG);
+                    setResult(RESULT_CANCELED, intent);
+                    hideProgressDialog();
+                    finish();
                     Toast.makeText(getApplicationContext(), error.getUrl(), Toast.LENGTH_LONG).show();
                 }
             }
