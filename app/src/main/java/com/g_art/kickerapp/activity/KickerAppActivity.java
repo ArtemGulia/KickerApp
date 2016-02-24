@@ -19,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +55,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     private SharedPrefsHandler loginHandler;
     public static int LOGIN_REQUEST_CODE = 1;
     public final static String FRAGMENT_TAG = "Fragment_Tag";
+    private boolean signUp = false;
 
     private TextView mTxtPlayerName;
     private CircleImageView mImgNavPlayerAvatar;
@@ -83,6 +83,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 
         if (savedInstanceState != null) {
             //Restore the fragment's instance
+            signUp = savedInstanceState.getBoolean("signUp");
             mPlayer = savedInstanceState.getParcelable(PLAYER_KEY);
             mFragment = getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_TAG);
         } else {
@@ -118,9 +119,11 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         if (!loginHandler.isLogged()) {
             Intent loginIntent = new Intent(this, LoginActivity.class);
 //            loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            signUp = true;
             startActivityForResult(loginIntent, LOGIN_REQUEST_CODE);
         } else {
             //TODO getSession
+            signUp = false;
             authorizeUser();
         }
     }
@@ -140,9 +143,12 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        //Save instance
-        outState.putParcelable(PLAYER_KEY, mPlayer);
-        getSupportFragmentManager().putFragment(outState, FRAGMENT_TAG, mFragment);
+        if (!signUp) {
+            //Save instance
+            outState.putParcelable(PLAYER_KEY, mPlayer);
+            getSupportFragmentManager().putFragment(outState, FRAGMENT_TAG, mFragment);
+        }
+        outState.putBoolean("signUp", signUp);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -151,6 +157,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         if (requestCode == LOGIN_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 mPlayer = data.getParcelableExtra("player");
+                signUp = false;
                 openPlayerProfile(mPlayer);
             }
         }
