@@ -179,7 +179,8 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                     }
                 }
 
-                Snackbar.make(findViewById(R.id.contentContainer), player.getDisplayName(),
+                Snackbar.make(findViewById(R.id.contentContainer),
+                        player.getDisplayName()+ " via "+ player.getProvider(),
                         Snackbar.LENGTH_LONG).show();
 
                 openPlayerProfile(player);
