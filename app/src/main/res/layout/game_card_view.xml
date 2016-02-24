@@ -30,13 +30,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/game_player1_avatar"
+                    android:layout_marginRight="5dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_marginRight="5dp"
                     android:src="@drawable/account"
-                    />
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
 
                 <TextView
                     android:id="@+id/game_player1_name"
@@ -71,14 +72,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/game_player2_avatar"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="5dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_alignParentTop="true"
                     android:src="@drawable/account"
-                    android:layout_marginRight="5dp"
-                    />
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
 
                 <TextView
                     android:id="@+id/game_player2_name"
@@ -134,13 +136,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/game_player3_avatar"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginLeft="5dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/account"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginLeft="5dp"/>
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
 
                 <TextView
                     android:id="@+id/game_player3_name"
@@ -171,13 +175,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/game_player4_avatar"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:src="@drawable/account"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginLeft="5dp"/>
+                    android:layout_marginLeft="5dp"
+                    app:civ_border_width="2dp"
+                    app:civ_border_color="#FF000000"/>
 
                 <TextView
                     android:id="@+id/game_player4_name"

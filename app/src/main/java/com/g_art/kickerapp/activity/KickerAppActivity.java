@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Header;
@@ -50,13 +51,14 @@ import retrofit.client.Response;
  */
 public class KickerAppActivity extends AppCompatActivity implements View.OnClickListener,
         NavigationView.OnNavigationItemSelectedListener {
+
     public static final String PLAYER_KEY = "Player";
     private SharedPrefsHandler loginHandler;
     public static int LOGIN_REQUEST_CODE = 1;
     public final static String FRAGMENT_TAG = "Fragment_Tag";
 
     private TextView mTxtPlayerName;
-    private ImageView mImgNavPlayerAvatar;
+    private CircleImageView mImgNavPlayerAvatar;
 
     private Fragment mFragment;
 
@@ -108,7 +110,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         header.setOnClickListener(this);
 
         mTxtPlayerName = (TextView) header.findViewById(R.id.txt_nav_header_player_name);
-        mImgNavPlayerAvatar = (ImageView) header.findViewById(R.id.nav_header_player_avatar);
+        mImgNavPlayerAvatar = (CircleImageView) header.findViewById(R.id.nav_header_player_avatar);
         mImgNavPlayerAvatar.setOnClickListener(this);
         navigationView.setNavigationItemSelectedListener(this);
         updateNavHeader();

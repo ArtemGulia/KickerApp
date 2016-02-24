@@ -13,15 +13,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/playerAvatar"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
                 android:layout_alignParentStart="false"
                 android:layout_alignParentTop="false"
-                android:layout_margin="25dp"
-                android:src="@mipmap/ic_launcher"
-                />
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/account"
+                app:civ_border_width="2dp"
+                app:civ_border_color="#FF000000"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"/>
 
             <TextView
                 android:id="@+id/txtPlayerNameLabel"
@@ -48,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/playerAvatar"
-                android:layout_marginLeft="25dp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginTop="15dp"
                 android:text="@string/games"
                 android:textAppearance="?android:attr/textAppearanceMedium"/>
