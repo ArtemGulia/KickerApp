@@ -32,10 +32,10 @@
 
                 <ImageView
                     android:id="@+id/game_player1_avatar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_marginRight="5dp"
-                    android:src="@android:drawable/sym_def_app_icon"
+                    android:src="@drawable/account"
                     />
 
                 <TextView
@@ -73,10 +73,10 @@
 
                 <ImageView
                     android:id="@+id/game_player2_avatar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_alignParentTop="true"
-                    android:src="@android:drawable/sym_def_app_icon"
+                    android:src="@drawable/account"
                     android:layout_marginRight="5dp"
                     />
 
@@ -136,9 +136,9 @@
 
                 <ImageView
                     android:id="@+id/game_player3_avatar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/sym_def_app_icon"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/account"
                     android:layout_alignParentEnd="true"
                     android:layout_marginLeft="5dp"/>
 
@@ -150,7 +150,7 @@
                     android:layout_alignTop="@+id/game_player3_avatar"
                     android:layout_alignBottom="@+id/game_player3_avatar"
                     android:layout_toLeftOf="@+id/game_player3_avatar"
-                    android:gravity="center_vertical"
+                    android:gravity="center_vertical|right"
                     android:layout_marginLeft="2dp"/>
             </RelativeLayout>
 
@@ -173,9 +173,9 @@
 
                 <ImageView
                     android:id="@+id/game_player4_avatar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/sym_def_app_icon"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/account"
                     android:layout_alignParentEnd="true"
                     android:layout_marginLeft="5dp"/>
 
@@ -183,7 +183,7 @@
                     android:id="@+id/game_player4_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
+                    android:gravity="center_vertical|right"
                     android:text="Player4"
                     android:layout_alignTop="@+id/game_player4_avatar"
                     android:layout_alignBottom="@+id/game_player4_avatar"

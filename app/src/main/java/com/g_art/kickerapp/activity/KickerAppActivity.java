@@ -32,6 +32,7 @@ import com.g_art.kickerapp.utils.api.UserApi;
 import com.g_art.kickerapp.utils.prefs.SharedPrefsHandler;
 import com.g_art.kickerapp.utils.rest.RestClient;
 import com.github.nkzawa.socketio.client.Socket;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.List;
@@ -49,6 +50,7 @@ import retrofit.client.Response;
  */
 public class KickerAppActivity extends AppCompatActivity implements View.OnClickListener,
         NavigationView.OnNavigationItemSelectedListener {
+    public static final String PLAYER_KEY = "Player";
     private SharedPrefsHandler loginHandler;
     public static int LOGIN_REQUEST_CODE = 1;
     public final static String FRAGMENT_TAG = "Fragment_Tag";
@@ -58,7 +60,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 
     private Fragment mFragment;
 
-    private Player player;
+    private Player mPlayer;
 
     private Socket mSocket;
 //    {
@@ -79,6 +81,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 
         if (savedInstanceState != null) {
             //Restore the fragment's instance
+            mPlayer = savedInstanceState.getParcelable(PLAYER_KEY);
             mFragment = getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_TAG);
         } else {
             checkLogin();
@@ -108,6 +111,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         mImgNavPlayerAvatar = (ImageView) header.findViewById(R.id.nav_header_player_avatar);
         mImgNavPlayerAvatar.setOnClickListener(this);
         navigationView.setNavigationItemSelectedListener(this);
+        updateNavHeader();
     }
 
     private void checkLogin() {
@@ -136,8 +140,8 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        //Save the fragment's instance
-
+        //Save instance
+        outState.putParcelable(PLAYER_KEY, mPlayer);
         getSupportFragmentManager().putFragment(outState, FRAGMENT_TAG, mFragment);
     }
 
@@ -146,8 +150,8 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 
         if (requestCode == LOGIN_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                player = data.getParcelableExtra("player");
-                openPlayerProfile(player);
+                mPlayer = data.getParcelableExtra("player");
+                openPlayerProfile(mPlayer);
             }
         }
     }
@@ -188,13 +192,14 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void openPlayerProfile(Player player) {
-        mTxtPlayerName.setText(player.getDisplayName());
+        mPlayer = player;
+        updateNavHeader();
         //get player from server via id
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(FRAGMENT_TAG);
         if (fragment == null) {
             Bundle bundle = new Bundle();
-            bundle.putParcelable(PlayerFragment.PLAYER_KEY, player);
+            bundle.putParcelable(PlayerFragment.PLAYER_KEY, mPlayer);
             FragmentTransaction ft = fragmentManager.beginTransaction();
             fragment = new PlayerFragment();
             mFragment = fragment;
@@ -202,6 +207,20 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
             ft.replace(R.id.contentContainer, fragment, FRAGMENT_TAG).commit();
         } else{
             mFragment = fragment;
+        }
+    }
+
+    private void updateNavHeader() {
+        if (mPlayer != null) {
+            mTxtPlayerName.setText(mPlayer.getDisplayName());
+            String avatarUrl = mPlayer.getImage();
+            if (null != avatarUrl && !avatarUrl.isEmpty()) {
+                Picasso.with(this).load(avatarUrl)
+                        .placeholder(R.drawable.account)
+                        .error(R.drawable.ic_info_black_48px)
+                        .fit()
+                        .into(mImgNavPlayerAvatar);
+            }
         }
     }
 
@@ -275,7 +294,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 
     private void openPlayerProfileFromNV() {
         Bundle bundle = new Bundle();
-        bundle.putParcelable(PlayerFragment.PLAYER_KEY, player);
+        bundle.putParcelable(PlayerFragment.PLAYER_KEY, mPlayer);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();

@@ -1,6 +1,5 @@
 package com.g_art.kickerapp.fragment.game;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,18 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.g_art.kickerapp.R;
 import com.g_art.kickerapp.adapter.GamesViewAdapter;
 import com.g_art.kickerapp.model.Game;
-import com.g_art.kickerapp.model.Player;
-import com.g_art.kickerapp.model.Team;
 import com.g_art.kickerapp.utils.api.GameApi;
 import com.g_art.kickerapp.utils.rest.RestClient;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,7 +60,7 @@ public class GamesFragment extends Fragment {
         // 2. set layoutManger
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         // 3. create an adapter
-        mAdapter = new GamesViewAdapter(Collections.<Game>emptyList());
+        mAdapter = new GamesViewAdapter(getActivity(), Collections.<Game>emptyList());
         // 4. set adapter
         mRecyclerView.setAdapter(mAdapter);
         // 5. set item animator to DefaultAnimator
