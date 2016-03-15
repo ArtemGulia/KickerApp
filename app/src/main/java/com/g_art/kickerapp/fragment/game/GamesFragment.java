@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.g_art.kickerapp.R;
@@ -35,6 +36,7 @@ public class GamesFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private GamesViewAdapter mAdapter;
+    private ProgressBar mProgressBar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public GamesFragment() {}
@@ -66,6 +68,8 @@ public class GamesFragment extends Fragment {
         // 5. set item animator to DefaultAnimator
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
+//        mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+
         requestForData();
 
         return view;
@@ -79,8 +83,9 @@ public class GamesFragment extends Fragment {
             public void success(List<Game> games, Response response) {
                 if (response != null) {
                     mAdapter.updateData(games);
+//                    mAdapter.notifyItemRangeChanged(0, games.size());
+                    mAdapter.notifyDataSetChanged();
                     onItemsLoadComplete();
-                    mAdapter.notifyItemRangeChanged(0, games.size());
                 }
             }
 
@@ -97,6 +102,8 @@ public class GamesFragment extends Fragment {
     void onItemsLoadComplete() {
         // Stop refresh animation
         mSwipeRefreshLayout.setRefreshing(false);
+//        mProgressBar.setVisibility(View.GONE);
+//        mRecyclerView.setVisibility(View.VISIBLE);
 
         // Update the UI and notify data set changed
 //        mAdapter.notifyDataSetChanged();

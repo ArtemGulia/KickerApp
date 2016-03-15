@@ -52,6 +52,9 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         NavigationView.OnNavigationItemSelectedListener {
 
     public static final String PLAYER_KEY = "Player";
+    public static final String SIGN_UP = "signUp";
+    public static final String CHECKED_ITEM_ID = "checkedItemId";
+    public int item_id = 0;
     private SharedPrefsHandler loginHandler;
     public static int LOGIN_REQUEST_CODE = 1;
     public final static String FRAGMENT_TAG = "Fragment_Tag";
@@ -81,16 +84,30 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 
         setContentView(R.layout.activity_home);
 
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View header = navigationView.getHeaderView(0);
+        header.setOnClickListener(this);
+
+        mTxtPlayerName = (TextView) header.findViewById(R.id.txt_nav_header_player_name);
+        mImgNavPlayerAvatar = (CircleImageView) header.findViewById(R.id.nav_header_player_avatar);
+        mImgNavPlayerAvatar.setOnClickListener(this);
+        navigationView.setNavigationItemSelectedListener(this);
+
         if (savedInstanceState != null) {
             //Restore the fragment's instance
-            signUp = savedInstanceState.getBoolean("signUp");
+            signUp = savedInstanceState.getBoolean(SIGN_UP);
+            item_id = savedInstanceState.getInt(CHECKED_ITEM_ID, 0);
             mPlayer = savedInstanceState.getParcelable(PLAYER_KEY);
             mFragment = getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_TAG);
+            if (item_id == 0) {
+                uncheckAllMenuItems(navigationView);
+            } else {
+                navigationView.setCheckedItem(item_id);
+            }
         } else {
             checkLogin();
         }
-
-//        mSocket.connect();
+        updateNavHeader();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -103,16 +120,6 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View header = navigationView.getHeaderView(0);
-        header.setOnClickListener(this);
-
-        mTxtPlayerName = (TextView) header.findViewById(R.id.txt_nav_header_player_name);
-        mImgNavPlayerAvatar = (CircleImageView) header.findViewById(R.id.nav_header_player_avatar);
-        mImgNavPlayerAvatar.setOnClickListener(this);
-        navigationView.setNavigationItemSelectedListener(this);
-        updateNavHeader();
     }
 
     private void checkLogin() {
@@ -124,7 +131,9 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         } else {
             //TODO getSession
             signUp = false;
-            authorizeUser();
+            if (mPlayer == null || RestClient.getsSessionId() == null) {
+                authorizeUser();
+            }
         }
     }
 
@@ -138,7 +147,6 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -148,7 +156,8 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
             outState.putParcelable(PLAYER_KEY, mPlayer);
             getSupportFragmentManager().putFragment(outState, FRAGMENT_TAG, mFragment);
         }
-        outState.putBoolean("signUp", signUp);
+        outState.putInt(CHECKED_ITEM_ID, item_id);
+        outState.putBoolean(SIGN_UP, signUp);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -266,7 +275,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        item_id = id;
         // now set clicked menu item to checked
         item.setChecked(true);
 
@@ -308,6 +317,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void openPlayerProfileFromNV() {
+        item_id = 0;
         Bundle bundle = new Bundle();
         bundle.putParcelable(PlayerFragment.PLAYER_KEY, mPlayer);
 
@@ -326,6 +336,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void uncheckAllMenuItems(NavigationView navigationView) {
+        item_id = 0;
         final Menu menu = navigationView.getMenu();
         for (int i = 0; i < menu.size(); i++) {
             MenuItem item = menu.getItem(i);
