@@ -3,11 +3,11 @@ package com.g_art.kickerapp.fragment.game;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +15,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.g_art.kickerapp.R;
+import com.g_art.kickerapp.activity.KickerAppActivity;
 import com.g_art.kickerapp.adapter.GamesViewAdapter;
 import com.g_art.kickerapp.model.Game;
+import com.g_art.kickerapp.model.Player;
+import com.g_art.kickerapp.utils.RecyclerItemClickListener;
 import com.g_art.kickerapp.utils.api.GameApi;
 import com.g_art.kickerapp.utils.rest.RestClient;
 
@@ -32,12 +35,14 @@ import retrofit.client.Response;
  */
 public class GamesFragment extends Fragment {
 
+    public static final String GAME_FRAGMENT = "game_fragment";
     private View view;
 
     private RecyclerView mRecyclerView;
     private GamesViewAdapter mAdapter;
     private ProgressBar mProgressBar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private Player mPlayer;
 
     public GamesFragment() {}
 
@@ -57,6 +62,10 @@ public class GamesFragment extends Fragment {
             }
         });
 
+        if (getArguments() != null) {
+            mPlayer = getArguments().getParcelable(KickerAppActivity.PLAYER_KEY);
+        }
+
         // 1. get a reference to recyclerView
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_games_list);
         // 2. set layoutManger
@@ -67,6 +76,34 @@ public class GamesFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
         // 5. set item animator to DefaultAnimator
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(KickerAppActivity.PLAYER_KEY, mPlayer);
+
+                Game selectedGame = mAdapter.getGameByPosition(position);
+                boolean isNewGame = selectedGame == null;
+                bundle.putBoolean(KickerAppActivity.NEW_GAME_KEY, isNewGame);
+
+                if (selectedGame != null) {
+                    bundle.putString(KickerAppActivity.GAME_KEY_ID, selectedGame.get_id());
+                }
+
+                // Create new fragment and transaction
+                Fragment newFragment = new GameFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                // Replace whatever is in the fragment_container view with this fragment,
+                // and add the transaction to the back stack
+                transaction.replace(R.id.contentContainer, newFragment, GAME_FRAGMENT);
+                transaction.addToBackStack(null);
+
+                // Commit the transaction
+                transaction.commit();
+            }
+        }));
 
 //        mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 

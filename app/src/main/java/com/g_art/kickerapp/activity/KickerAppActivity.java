@@ -54,6 +54,8 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     public static final String PLAYER_KEY = "Player";
     public static final String SIGN_UP = "signUp";
     public static final String CHECKED_ITEM_ID = "checkedItemId";
+    public static final String NEW_GAME_KEY = "is_new_game";
+    public static final String GAME_KEY_ID = "game_id";
     public int item_id = 0;
     private SharedPrefsHandler loginHandler;
     public static int LOGIN_REQUEST_CODE = 1;
@@ -290,6 +292,11 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         }
 
         if (null != fragment) {
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(PlayerFragment.PLAYER_KEY, mPlayer);
+            fragment.setArguments(bundle);
+
             mFragment = fragment;
             ft.replace(R.id.contentContainer, fragment, FRAGMENT_TAG).commit();
         }

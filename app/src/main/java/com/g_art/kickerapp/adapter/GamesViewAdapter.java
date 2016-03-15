@@ -108,6 +108,16 @@ public class GamesViewAdapter extends RecyclerView.Adapter<GamesViewAdapter.View
         this.gameList = gameList;
     }
 
+    public Game getGameByPosition(int position) {
+        if (null != gameList && !gameList.isEmpty()) {
+            if (gameList.size() > position) {
+                return gameList.get(position);
+            }
+        }
+
+        return null;
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView imgPlayer1;
