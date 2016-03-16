@@ -106,12 +106,13 @@ public class GameFragment extends Fragment {
 
     private void updateUI(Game game) {
         if (game != null) {
-            mSwipeRefreshLayout.setRefreshing(false);
             mProgressBar.setVisibility(View.GONE);
             mGameViewHolder.setVisibility(View.VISIBLE);
 
             mGame = game;
             mGameViewHolder.setGame(getActivity(), mGame);
+
+            mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 
@@ -163,11 +164,18 @@ public class GameFragment extends Fragment {
 
                 Team teamF = teams.get(0);
                 setTeamF(context, teamF);
+                int scoreF = teamF.getScores();
+                int scoreS = 0;
 
                 if (teams.size() > 1) {
                     Team teamS = teams.get(1);
+                    scoreS = teamS.getScores();
                     setTeamS(context, teamS);
                 }
+                //Set Game Score
+                String score = scoreF + ":" + scoreS;
+                txtGameScore.setText(score);
+
             }
         }
 

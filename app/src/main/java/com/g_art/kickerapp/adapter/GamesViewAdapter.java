@@ -91,7 +91,7 @@ public class GamesViewAdapter extends RecyclerView.Adapter<GamesViewAdapter.View
             }
 
             //Set Game Score
-            String score = team1.getScore() + ":" + team2.getScore();
+            String score = team1.getScores() + ":" + team2.getScores();
             holder.txtGameScore.setText(score);
         }
     }

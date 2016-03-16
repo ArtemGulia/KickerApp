@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class Team {
     private String _id;
-    private int score;
+    private int scores;
     @SerializedName("players")
     private List<Player> playerList;
 
@@ -30,12 +30,12 @@ public class Team {
         this._id = _id;
     }
 
-    public int getScore() {
-        return score;
+    public int getScores() {
+        return scores;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setScores(int scores) {
+        this.scores = scores;
     }
 
     public List<Player> getPlayerList() {
