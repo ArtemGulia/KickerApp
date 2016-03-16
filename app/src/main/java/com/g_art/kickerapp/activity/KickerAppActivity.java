@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.g_art.kickerapp.R;
 import com.g_art.kickerapp.fragment.game.GamesFragment;
 import com.g_art.kickerapp.fragment.PlayerFragment;
-import com.g_art.kickerapp.fragment.TournamentsFragment;
+import com.g_art.kickerapp.fragment.tournament.TournamentsFragment;
 import com.g_art.kickerapp.model.Player;
 import com.g_art.kickerapp.utils.api.UserApi;
 import com.g_art.kickerapp.utils.prefs.SharedPrefsHandler;

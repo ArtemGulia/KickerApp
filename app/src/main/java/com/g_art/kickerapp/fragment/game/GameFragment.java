@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.g_art.kickerapp.R;
 import com.g_art.kickerapp.activity.KickerAppActivity;
 import com.g_art.kickerapp.model.Player;
+import com.g_art.kickerapp.services.GameService;
 
 /**
  * Kicker App
@@ -27,6 +28,7 @@ public class GameFragment extends Fragment {
     private String mGameId;
     private ProgressBar mProgressBar;
     private GameViewHolder mGameViewHolder;
+    private GameService mgameService;
 
 
     @Nullable

@@ -1,4 +1,4 @@
-package com.g_art.kickerapp.fragment;
+package com.g_art.kickerapp.fragment.tournament;
 
 import android.support.v4.app.Fragment;
 

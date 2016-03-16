@@ -26,6 +26,7 @@ import com.g_art.kickerapp.utils.rest.RestClient;
 import java.util.Collections;
 import java.util.List;
 
+import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
@@ -105,7 +106,9 @@ public class GamesFragment extends Fragment {
             }
         }));
 
-//        mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+        mRecyclerView.setVisibility(View.GONE);
+
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar_game_list);
 
         requestForData();
 
@@ -115,13 +118,12 @@ public class GamesFragment extends Fragment {
     private void requestForData() {
         GameApi gameApi = RestClient.getGameApi();
 
-        gameApi.getAllGames(new retrofit.Callback<List<Game>>() {
+        gameApi.getAllGames(new Callback<List<Game>>() {
             @Override
             public void success(List<Game> games, Response response) {
                 if (response != null) {
                     mAdapter.updateData(games);
-//                    mAdapter.notifyItemRangeChanged(0, games.size());
-                    mAdapter.notifyDataSetChanged();
+//                    mAdapter.notifyDataSetChanged();
                     onItemsLoadComplete();
                 }
             }
@@ -139,11 +141,11 @@ public class GamesFragment extends Fragment {
     void onItemsLoadComplete() {
         // Stop refresh animation
         mSwipeRefreshLayout.setRefreshing(false);
-//        mProgressBar.setVisibility(View.GONE);
-//        mRecyclerView.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
 
         // Update the UI and notify data set changed
-//        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
         //this line below gives you the animation and also updates the
         //list items after the deleted item
 //        mAdapter.notifyItemRangeChanged(0, getItemCount());
