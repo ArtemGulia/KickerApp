@@ -51,7 +51,7 @@ import retrofit.client.Response;
 public class KickerAppActivity extends AppCompatActivity implements View.OnClickListener,
         NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String PLAYER_KEY = "Player";
+    public static final String PLAYER_KEY = "player";
     public static final String SIGN_UP = "signUp";
     public static final String CHECKED_ITEM_ID = "checkedItemId";
     public static final String NEW_GAME_KEY = "is_new_game";
@@ -294,7 +294,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         if (null != fragment) {
 
             Bundle bundle = new Bundle();
-            bundle.putParcelable(PlayerFragment.PLAYER_KEY, mPlayer);
+            bundle.putParcelable(PLAYER_KEY, mPlayer);
             fragment.setArguments(bundle);
 
             mFragment = fragment;

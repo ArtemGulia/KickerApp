@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.g_art.kickerapp.R;
 import com.g_art.kickerapp.activity.KickerAppActivity;
 import com.g_art.kickerapp.adapter.GamesViewAdapter;
+import com.g_art.kickerapp.fragment.PlayerFragment;
 import com.g_art.kickerapp.model.Game;
 import com.g_art.kickerapp.model.Player;
 import com.g_art.kickerapp.utils.RecyclerItemClickListener;
@@ -64,7 +65,8 @@ public class GamesFragment extends Fragment {
         });
 
         if (getArguments() != null) {
-            mPlayer = getArguments().getParcelable(KickerAppActivity.PLAYER_KEY);
+            Bundle bundle = getArguments();
+            mPlayer = bundle.getParcelable(PlayerFragment.PLAYER_KEY);
         }
 
         // 1. get a reference to recyclerView
@@ -81,28 +83,7 @@ public class GamesFragment extends Fragment {
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(KickerAppActivity.PLAYER_KEY, mPlayer);
-
-                Game selectedGame = mAdapter.getGameByPosition(position);
-                boolean isNewGame = selectedGame == null;
-                bundle.putBoolean(KickerAppActivity.NEW_GAME_KEY, isNewGame);
-
-                if (selectedGame != null) {
-                    bundle.putString(KickerAppActivity.GAME_KEY_ID, selectedGame.get_id());
-                }
-
-                // Create new fragment and transaction
-                Fragment newFragment = new GameFragment();
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-                // Replace whatever is in the fragment_container view with this fragment,
-                // and add the transaction to the back stack
-                transaction.replace(R.id.contentContainer, newFragment, GAME_FRAGMENT);
-                transaction.addToBackStack(null);
-
-                // Commit the transaction
-                transaction.commit();
+                openGameFragment(position);
             }
         }));
 
@@ -115,6 +96,33 @@ public class GamesFragment extends Fragment {
         return view;
     }
 
+    private void openGameFragment(int position) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(KickerAppActivity.PLAYER_KEY, mPlayer);
+
+        Game selectedGame = mAdapter.getGameByPosition(position);
+        boolean isNewGame = selectedGame == null;
+        bundle.putBoolean(KickerAppActivity.NEW_GAME_KEY, isNewGame);
+
+        if (selectedGame != null) {
+            bundle.putString(KickerAppActivity.GAME_KEY_ID, selectedGame.get_id());
+        }
+
+        // Create new fragment and transaction
+        Fragment newFragment = new GameFragment();
+        newFragment.setArguments(bundle);
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack
+        transaction.replace(R.id.contentContainer, newFragment, GAME_FRAGMENT);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+    }
+
     private void requestForData() {
         GameApi gameApi = RestClient.getGameApi();
 
@@ -123,7 +131,6 @@ public class GamesFragment extends Fragment {
             public void success(List<Game> games, Response response) {
                 if (response != null) {
                     mAdapter.updateData(games);
-//                    mAdapter.notifyDataSetChanged();
                     onItemsLoadComplete();
                 }
             }
@@ -144,10 +151,6 @@ public class GamesFragment extends Fragment {
         mProgressBar.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
 
-        // Update the UI and notify data set changed
         mAdapter.notifyDataSetChanged();
-        //this line below gives you the animation and also updates the
-        //list items after the deleted item
-//        mAdapter.notifyItemRangeChanged(0, getItemCount());
     }
 }

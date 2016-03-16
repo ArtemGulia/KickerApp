@@ -5,7 +5,10 @@ import com.g_art.kickerapp.model.Game;
 import java.util.List;
 
 import retrofit.Callback;
+import retrofit.http.Body;
 import retrofit.http.GET;
+import retrofit.http.Headers;
+import retrofit.http.POST;
 
 /**
  * Kicker App
@@ -15,7 +18,9 @@ public interface GameApi {
 
     void createGame(Game game, Callback<Game> callback);
 
-    void getGame(Game game, Callback<Game> callback);
+    @Headers("Content-Type: application/json")
+    @POST("/game/get")
+    void getGame(@Body Game id, Callback<Game> callback);
 
     void getActiveGames(Callback<List<Game>> callback);
 
