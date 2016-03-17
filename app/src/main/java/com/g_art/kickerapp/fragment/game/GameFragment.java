@@ -68,8 +68,9 @@ public class GameFragment extends Fragment {
         }
 
         if (mIsNewGame) {
-
+            ((KickerAppActivity)getActivity()).hideFab();
         } else {
+            ((KickerAppActivity)getActivity()).showFab();
             mProgressBar.setVisibility(View.VISIBLE);
             mGameViewHolder.setVisibility(View.GONE);
             requestForData();
@@ -128,6 +129,11 @@ public class GameFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        ((KickerAppActivity)getActivity()).showFab();
+        super.onDestroy();
+    }
 
     public static class GameViewHolder {
 

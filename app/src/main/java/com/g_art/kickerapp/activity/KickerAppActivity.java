@@ -25,8 +25,10 @@ import android.widget.Toast;
 
 import com.g_art.kickerapp.R;
 import com.g_art.kickerapp.fragment.PlayerFragment;
+import com.g_art.kickerapp.fragment.game.GameFragment;
 import com.g_art.kickerapp.fragment.game.GamesFragment;
 import com.g_art.kickerapp.fragment.tournament.TournamentsFragment;
+import com.g_art.kickerapp.model.Game;
 import com.g_art.kickerapp.model.Player;
 import com.g_art.kickerapp.utils.api.UserApi;
 import com.g_art.kickerapp.utils.prefs.SharedPrefsHandler;
@@ -66,6 +68,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     private TextView mTxtPlayerName;
     private CircleImageView mImgNavPlayerAvatar;
     private ActionBarDrawerToggle toggle;
+    private FloatingActionButton fab;
 
     private Fragment mFragment;
 
@@ -116,8 +119,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -327,8 +329,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         int id = v.getId();
         switch (id) {
             case R.id.fab:
-                Snackbar.make(v, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                openGameFragment();
                 break;
             case R.id.nav_header_player_avatar:
                 openPlayerProfileFromNV();
@@ -337,6 +338,29 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                 openPlayerProfileFromNV();
                 break;
         }
+    }
+
+    private void openGameFragment() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(KickerAppActivity.PLAYER_KEY, mPlayer);
+
+        boolean isNewGame = true;
+        bundle.putBoolean(KickerAppActivity.NEW_GAME_KEY, isNewGame);
+
+        // Create new fragment and transaction
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+
+        Fragment newFragment = new GameFragment();
+        newFragment.setArguments(bundle);
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack
+        ft.replace(R.id.contentContainer, newFragment, GamesFragment.GAME_FRAGMENT);
+        ft.addToBackStack(null);
+
+        // Commit the transaction
+        ft.commit();
     }
 
     public void registerBackStackListener() {
@@ -391,5 +415,15 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                 item.setChecked(false);
             }
         }
+    }
+
+    public void showFab() {
+        if (fab != null) {
+            fab.show();
+        }
+    }
+
+    public void hideFab() {
+        fab.hide();
     }
 }
