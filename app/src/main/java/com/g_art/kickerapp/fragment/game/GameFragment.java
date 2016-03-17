@@ -69,6 +69,8 @@ public class GameFragment extends Fragment {
 
         if (mIsNewGame) {
             ((KickerAppActivity)getActivity()).hideFab();
+            mSwipeRefreshLayout.setRefreshing(false);
+            mSwipeRefreshLayout.setEnabled(false);
         } else {
             ((KickerAppActivity)getActivity()).showFab();
             mProgressBar.setVisibility(View.VISIBLE);

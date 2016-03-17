@@ -342,10 +342,10 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 
     private void openGameFragment() {
         Bundle bundle = new Bundle();
-        bundle.putParcelable(KickerAppActivity.PLAYER_KEY, mPlayer);
+        bundle.putParcelable(PLAYER_KEY, mPlayer);
 
         boolean isNewGame = true;
-        bundle.putBoolean(KickerAppActivity.NEW_GAME_KEY, isNewGame);
+        bundle.putBoolean(NEW_GAME_KEY, isNewGame);
 
         // Create new fragment and transaction
         FragmentManager fragmentManager = getSupportFragmentManager();
