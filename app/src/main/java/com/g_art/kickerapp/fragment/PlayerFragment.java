@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.g_art.kickerapp.R;
+import com.g_art.kickerapp.activity.KickerAppActivity;
 import com.g_art.kickerapp.model.Player;
 import com.g_art.kickerapp.utils.api.UserApi;
 import com.g_art.kickerapp.utils.prefs.SharedPrefsHandler;
@@ -135,6 +137,15 @@ public class PlayerFragment extends Fragment {
             mTxtGames.setText(""+mPlayer.getGames());
             mTxtWins.setText(""+mPlayer.getWins());
             mTxtLosses.setText(""+mPlayer.getLosses());
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ActionBar actionBar = ((KickerAppActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(R.string.profile_screen);
         }
     }
 

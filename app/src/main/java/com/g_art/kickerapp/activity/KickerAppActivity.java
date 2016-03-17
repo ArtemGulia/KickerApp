@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,8 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.g_art.kickerapp.R;
-import com.g_art.kickerapp.fragment.game.GamesFragment;
 import com.g_art.kickerapp.fragment.PlayerFragment;
+import com.g_art.kickerapp.fragment.game.GamesFragment;
 import com.g_art.kickerapp.fragment.tournament.TournamentsFragment;
 import com.g_art.kickerapp.model.Player;
 import com.g_art.kickerapp.utils.api.UserApi;
@@ -64,6 +65,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 
     private TextView mTxtPlayerName;
     private CircleImageView mImgNavPlayerAvatar;
+    private ActionBarDrawerToggle toggle;
 
     private Fragment mFragment;
 
@@ -114,14 +116,28 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+        registerBackStackListener();
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStack();
+                } else {
+                    drawer.openDrawer(GravityCompat.START);
+                }
+            }
+        });
     }
 
     private void checkLogin() {
@@ -201,7 +217,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                 }
 
                 Snackbar.make(findViewById(R.id.contentContainer),
-                        player.getDisplayName()+ " via "+ player.getProvider(),
+                        player.getDisplayName() + " via " + player.getProvider(),
                         Snackbar.LENGTH_LONG).show();
 
                 openPlayerProfile(player);
@@ -231,7 +247,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
             mFragment = fragment;
             fragment.setArguments(bundle);
             ft.replace(R.id.contentContainer, fragment, FRAGMENT_TAG).commit();
-        } else{
+        } else {
             mFragment = fragment;
         }
     }
@@ -321,6 +337,24 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                 openPlayerProfileFromNV();
                 break;
         }
+    }
+
+    public void registerBackStackListener() {
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                ActionBar actionBar = getSupportActionBar();
+                if (actionBar != null) {
+                    if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                        actionBar.setDisplayHomeAsUpEnabled(true);
+                    } else {
+                        actionBar.setDisplayHomeAsUpEnabled(false);
+                        toggle.syncState();
+                    }
+                }
+            }
+        });
+
     }
 
     private void openPlayerProfileFromNV() {

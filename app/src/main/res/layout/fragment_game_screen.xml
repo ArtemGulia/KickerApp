@@ -13,7 +13,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ProgressBar
                 android:id="@+id/progress_bar"
@@ -69,7 +69,7 @@
                                         android:layout_width="50dp"
                                         android:layout_height="50dp"
                                         android:layout_margin="5dp"
-                                        android:src="@drawable/account"
+                                        android:src="@drawable/account_plus"
                                         app:civ_border_color="#FF000000"
                                         app:civ_border_width="2dp"/>
 
@@ -82,7 +82,7 @@
                                         android:layout_marginRight="2dp"
                                         android:layout_toRightOf="@+id/cv_game_player1_avatar"
                                         android:gravity="center_vertical"
-                                        android:text="Player1"/>
+                                        android:text="@string/add_player"/>
 
                                 </RelativeLayout>
                             </com.balysv.materialripple.MaterialRippleLayout>
@@ -118,7 +118,7 @@
                                         android:layout_height="50dp"
                                         android:layout_alignParentTop="true"
                                         android:layout_margin="5dp"
-                                        android:src="@drawable/account"
+                                        android:src="@drawable/account_plus"
                                         app:civ_border_color="#FF000000"
                                         app:civ_border_width="2dp"/>
 
@@ -131,7 +131,7 @@
                                         android:layout_marginRight="2dp"
                                         android:layout_toRightOf="@+id/cv_game_player2_avatar"
                                         android:gravity="center_vertical"
-                                        android:text="Player2"/>
+                                        android:text="@string/add_player"/>
 
                                 </RelativeLayout>
                             </com.balysv.materialripple.MaterialRippleLayout>
@@ -147,7 +147,7 @@
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
                             android:padding="5dp"
-                            android:text="VS"
+                            android:text="@string/vs_game"
                             android:textSize="15sp"/>
 
                         <TextView
@@ -160,7 +160,7 @@
                             android:layout_below="@+id/cv_game_vs"
                             android:gravity="center_vertical|center_horizontal"
                             android:padding="3dp"
-                            android:text="0:0"
+                            android:text="@string/score_number"
                             android:textSize="15sp"/>
 
                         <android.support.v7.widget.CardView
@@ -188,7 +188,7 @@
                                         android:layout_height="50dp"
                                         android:layout_alignParentEnd="true"
                                         android:layout_margin="5dp"
-                                        android:src="@drawable/account"
+                                        android:src="@drawable/account_plus"
                                         app:civ_border_color="#FF000000"
                                         app:civ_border_width="2dp"/>
 
@@ -201,7 +201,7 @@
                                         android:layout_marginLeft="2dp"
                                         android:layout_toLeftOf="@+id/cv_game_player3_avatar"
                                         android:gravity="center_vertical|right"
-                                        android:text="Player3"/>
+                                        android:text="@string/add_player"/>
                                 </RelativeLayout>
                             </com.balysv.materialripple.MaterialRippleLayout>
 
@@ -233,7 +233,7 @@
                                         android:layout_height="50dp"
                                         android:layout_alignParentEnd="true"
                                         android:layout_margin="5dp"
-                                        android:src="@drawable/account"
+                                        android:src="@drawable/account_plus"
                                         app:civ_border_color="#FF000000"
                                         app:civ_border_width="2dp"/>
 
@@ -246,7 +246,7 @@
                                         android:layout_marginLeft="2dp"
                                         android:layout_toLeftOf="@+id/cv_game_player4_avatar"
                                         android:gravity="center_vertical|right"
-                                        android:text="Player4"/>
+                                        android:text="@string/add_player"/>
                                 </RelativeLayout>
                             </com.balysv.materialripple.MaterialRippleLayout>
                         </android.support.v7.widget.CardView>
