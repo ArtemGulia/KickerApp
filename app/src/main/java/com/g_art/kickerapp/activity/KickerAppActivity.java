@@ -303,6 +303,13 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         FragmentTransaction ft = fragmentManager.beginTransaction();
         Fragment fragment = null;
 
+        GameFragment gFr = (GameFragment) fragmentManager.findFragmentByTag(GamesFragment.GAME_FRAGMENT);
+        if (gFr != null) {
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.remove(gFr);
+            transaction.commit();
+        }
+
         if (id == R.id.nav_camera) {
             fragment = new GamesFragment();
         } else if (id == R.id.nav_gallery) {
