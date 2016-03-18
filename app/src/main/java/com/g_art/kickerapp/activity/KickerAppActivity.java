@@ -28,7 +28,6 @@ import com.g_art.kickerapp.fragment.PlayerFragment;
 import com.g_art.kickerapp.fragment.game.GameFragment;
 import com.g_art.kickerapp.fragment.game.GamesFragment;
 import com.g_art.kickerapp.fragment.tournament.TournamentsFragment;
-import com.g_art.kickerapp.model.Game;
 import com.g_art.kickerapp.model.Player;
 import com.g_art.kickerapp.utils.api.UserApi;
 import com.g_art.kickerapp.utils.prefs.SharedPrefsHandler;
@@ -69,6 +68,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     private CircleImageView mImgNavPlayerAvatar;
     private ActionBarDrawerToggle toggle;
     private FloatingActionButton fab;
+    private DrawerLayout drawer;
 
     private Fragment mFragment;
 
@@ -122,7 +122,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(this);
 
-        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -337,6 +337,13 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
             case R.id.nav_header:
                 openPlayerProfileFromNV();
                 break;
+            case R.id.toolbar:
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStack();
+                } else {
+                    drawer.openDrawer(GravityCompat.START);
+                }
+                break;
         }
     }
 
@@ -415,6 +422,14 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                 item.setChecked(false);
             }
         }
+    }
+
+    public void enableNavigation() {
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+    }
+
+    public void disableNavigation() {
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
     public void showFab() {

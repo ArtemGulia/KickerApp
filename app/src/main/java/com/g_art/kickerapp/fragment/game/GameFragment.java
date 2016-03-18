@@ -88,6 +88,7 @@ public class GameFragment extends Fragment {
             }
         });
 
+        ((KickerAppActivity)getActivity()).disableNavigation();
         return view;
     }
 
@@ -134,6 +135,7 @@ public class GameFragment extends Fragment {
     @Override
     public void onDestroy() {
         ((KickerAppActivity)getActivity()).showFab();
+        ((KickerAppActivity)getActivity()).enableNavigation();
         super.onDestroy();
     }
 
