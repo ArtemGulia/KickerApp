@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.balysv.materialripple.MaterialRippleLayout;
 import com.g_art.kickerapp.R;
 import com.g_art.kickerapp.activity.KickerAppActivity;
 import com.g_art.kickerapp.model.Game;
@@ -35,7 +36,7 @@ import retrofit.client.Response;
  * Kicker App
  * Created by G_Art on 23/2/2016.
  */
-public class GameFragment extends Fragment {
+public class GameFragment extends Fragment implements View.OnClickListener {
 
     private View view;
     private Player mPlayer;
@@ -59,6 +60,7 @@ public class GameFragment extends Fragment {
 
         //Init game card
         mGameViewHolder = new GameViewHolder(view);
+        mGameViewHolder.setOnClickListener(this);
 
         if (getArguments() != null) {
             Bundle bundle = getArguments();
@@ -68,11 +70,11 @@ public class GameFragment extends Fragment {
         }
 
         if (mIsNewGame) {
-            ((KickerAppActivity)getActivity()).hideFab();
+            ((KickerAppActivity) getActivity()).hideFab();
             mSwipeRefreshLayout.setRefreshing(false);
             mSwipeRefreshLayout.setEnabled(false);
         } else {
-            ((KickerAppActivity)getActivity()).showFab();
+            ((KickerAppActivity) getActivity()).showFab();
             mProgressBar.setVisibility(View.VISIBLE);
             mGameViewHolder.setVisibility(View.GONE);
             requestForData();
@@ -88,18 +90,53 @@ public class GameFragment extends Fragment {
             }
         });
 
-        ((KickerAppActivity)getActivity()).disableNavigation();
+        ((KickerAppActivity) getActivity()).disableNavigation();
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ActionBar actionBar = ((KickerAppActivity)getActivity()).getSupportActionBar();
+        ActionBar actionBar = ((KickerAppActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(R.string.game_screen);
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        ((KickerAppActivity) getActivity()).showFab();
+        ((KickerAppActivity) getActivity()).enableNavigation();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.cv_game_player1:
+                showPlayerInfo(mGame.getTeams().get(0).getPlayerList().get(0));
+                break;
+
+            case R.id.cv_game_player2:
+                showPlayerInfo(mGame.getTeams().get(0).getPlayerList().get(1));
+                break;
+
+            case R.id.cv_game_player3:
+                showPlayerInfo(mGame.getTeams().get(1).getPlayerList().get(0));
+                break;
+
+            case R.id.cv_game_player4:
+                showPlayerInfo(mGame.getTeams().get(1).getPlayerList().get(1));
+                break;
+        }
+    }
+
+    private void showPlayerInfo(Player player) {
+        if (null != player) {
+            Toast.makeText(getActivity(), player.getDisplayName(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -132,26 +169,27 @@ public class GameFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        ((KickerAppActivity)getActivity()).showFab();
-        ((KickerAppActivity)getActivity()).enableNavigation();
-        super.onDestroy();
-    }
-
     public static class GameViewHolder {
 
         public CardView gameCardView;
 
+//        public MaterialRippleLayout mrPlayer1;
+        public CardView cvPlayer1;
         public ImageView imgPlayer1;
         public TextView txtPlayer1Name;
 
+//        public MaterialRippleLayout mrPlayer2;
+        public CardView cvPlayer2;
         public ImageView imgPlayer2;
         public TextView txtPlayer2Name;
 
+//        public MaterialRippleLayout mrPlayer3;
+        public CardView cvPlayer3;
         public ImageView imgPlayer3;
         public TextView txtPlayer3Name;
 
+//        public MaterialRippleLayout mrPlayer4;
+        public CardView cvPlayer4;
         public ImageView imgPlayer4;
         public TextView txtPlayer4Name;
 
@@ -161,19 +199,38 @@ public class GameFragment extends Fragment {
         public GameViewHolder(View itemView) {
             gameCardView = (CardView) itemView.findViewById(R.id.cv_game);
 
+//            mrPlayer1 = (MaterialRippleLayout) itemView.findViewById(R.id.mr_game_player1);
+            cvPlayer1 = (CardView) itemView.findViewById(R.id.cv_game_player1);
             imgPlayer1 = (ImageView) itemView.findViewById(R.id.cv_game_player1_avatar);
             txtPlayer1Name = (TextView) itemView.findViewById(R.id.cv_game_player1_name);
 
+//            mrPlayer2 = (MaterialRippleLayout) itemView.findViewById(R.id.mr_game_player2);
+            cvPlayer2 = (CardView) itemView.findViewById(R.id.cv_game_player2);
             imgPlayer2 = (ImageView) itemView.findViewById(R.id.cv_game_player2_avatar);
             txtPlayer2Name = (TextView) itemView.findViewById(R.id.cv_game_player2_name);
 
+//            mrPlayer3 = (MaterialRippleLayout) itemView.findViewById(R.id.mr_game_player3);
+            cvPlayer3 = (CardView) itemView.findViewById(R.id.cv_game_player3);
             imgPlayer3 = (ImageView) itemView.findViewById(R.id.cv_game_player3_avatar);
             txtPlayer3Name = (TextView) itemView.findViewById(R.id.cv_game_player3_name);
 
+//            mrPlayer4 = (MaterialRippleLayout) itemView.findViewById(R.id.mr_game_player4);
+            cvPlayer4 = (CardView) itemView.findViewById(R.id.cv_game_player4);
             imgPlayer4 = (ImageView) itemView.findViewById(R.id.cv_game_player4_avatar);
             txtPlayer4Name = (TextView) itemView.findViewById(R.id.cv_game_player4_name);
 
             txtGameScore = (TextView) itemView.findViewById(R.id.cv_game_score);
+        }
+
+        public void setOnClickListener(View.OnClickListener onClickListener) {
+            cvPlayer1.setOnClickListener(onClickListener);
+            cvPlayer2.setOnClickListener(onClickListener);
+            cvPlayer3.setOnClickListener(onClickListener);
+            cvPlayer4.setOnClickListener(onClickListener);
+//            mrPlayer1.setOnClickListener(onClickListener);
+//            mrPlayer2.setOnClickListener(onClickListener);
+//            mrPlayer3.setOnClickListener(onClickListener);
+//            mrPlayer4.setOnClickListener(onClickListener);
         }
 
         public void setVisibility(int visibility) {
@@ -181,23 +238,39 @@ public class GameFragment extends Fragment {
         }
 
         public void setGame(Context context, Game mGame) {
-            if (mGame != null && mGame.getTeams() != null && !mGame.getTeams().isEmpty()) {
-                List<Team> teams = mGame.getTeams();
+            if (mGame != null) {
+                if (mGame.getTeams() != null && !mGame.getTeams().isEmpty()) {
+                    List<Team> teams = mGame.getTeams();
 
-                Team teamF = teams.get(0);
-                setTeamF(context, teamF);
-                int scoreF = teamF.getScores();
-                int scoreS = 0;
+                    Team teamF = teams.get(0);
+                    setTeamF(context, teamF);
+                    int scoreF = teamF.getScores();
+                    int scoreS = 0;
 
-                if (teams.size() > 1) {
-                    Team teamS = teams.get(1);
-                    scoreS = teamS.getScores();
-                    setTeamS(context, teamS);
+                    if (teams.size() > 1) {
+                        Team teamS = teams.get(1);
+                        scoreS = teamS.getScores();
+                        setTeamS(context, teamS);
+                    }
+                    //Set Game Score
+                    String score = scoreF + ":" + scoreS;
+                    txtGameScore.setText(score);
+                } else {
+                    List<Player> players = mGame.getPlayers();
+                    if (players != null && !players.isEmpty()) {
+                        Player playerF = players.get(0);
+                        setPlayerF(context, playerF);
+
+                        if (players.size() > 1) {
+                            Player playerS = players.get(1);
+                            setPlayerS(context, playerS);
+                            if (players.size() > 2) {
+                                Player playerT = players.get(2);
+                                setPlayerT(context, playerT);
+                            }
+                        }
+                    }
                 }
-                //Set Game Score
-                String score = scoreF + ":" + scoreS;
-                txtGameScore.setText(score);
-
             }
         }
 
@@ -255,7 +328,6 @@ public class GameFragment extends Fragment {
 
             }
         }
-
 
         private void setPlayer(Context context, Player player, TextView txtName, ImageView imgAvatar) {
             if (player == null || context == null) {

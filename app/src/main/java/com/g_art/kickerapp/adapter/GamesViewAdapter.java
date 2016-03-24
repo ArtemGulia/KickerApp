@@ -46,54 +46,64 @@ public class GamesViewAdapter extends RecyclerView.Adapter<GamesViewAdapter.View
 
         if (null != gameList && !gameList.isEmpty()) {
             Game game = gameList.get(position);
-            Team team1 = game.getTeams().get(0);
-            Team team2 = game.getTeams().get(1);
+            Player player1 = null;
+            Player player2 = null;
+            Player player3 = null;
+            Player player4 = null;
+            String score = "0:0";
 
-            Player player1 = team1.getPlayerList().get(0);
-            Player player2 = team1.getPlayerList().get(1);
-            Player player3 = team2.getPlayerList().get(0);
-            Player player4 = team2.getPlayerList().get(1);
+            if (game.getTeams() == null || game.getTeams().isEmpty()) {
+                List<Player> players = game.getPlayers();
+                if (players != null && !players.isEmpty()) {
+                    player1 = players.get(0);
+                }
+            } else {
+                Team team1 = game.getTeams().get(0);
+                Team team2 = game.getTeams().get(1);
+
+                player1 = team1.getPlayerList().get(0);
+                player2 = team1.getPlayerList().get(1);
+                player3 = team2.getPlayerList().get(0);
+                player4 = team2.getPlayerList().get(1);
+
+                score = team1.getScores() + ":" + team2.getScores();
+            }
+
 
             //Set Players details
-            holder.txtPlayer1Name.setText(player1.getDisplayName());
-            String pl1Url = player1.getImage();
-            Picasso.with(context)
-                    .setIndicatorsEnabled(true);
-            if (null != pl1Url && !pl1Url.isEmpty()) {
-                Picasso.with(context).load(pl1Url)
-                        .placeholder(R.drawable.account)
-                        .error(R.drawable.ic_info_black_48px)
-                        .fit().into(holder.imgPlayer1);
+
+            if (null != player1) {
+                setPlayer(context, player1, holder.txtPlayer1Name, holder.imgPlayer1);
             }
-            holder.txtPlayer2Name.setText(player2.getDisplayName());
-            String pl2Url = player2.getImage();
-            if (null != pl2Url && !pl2Url.isEmpty()) {
-                Picasso.with(context).load(pl2Url)
-                        .placeholder(R.drawable.account)
-                        .error(R.drawable.ic_info_black_48px)
-                        .fit().into(holder.imgPlayer2);
+
+            if (null != player2) {
+                setPlayer(context, player2, holder.txtPlayer2Name, holder.imgPlayer3);
             }
-            holder.txtPlayer3Name.setText(player3.getDisplayName());
-            String pl3Url = player3.getImage();
-            if (null != pl3Url && !pl3Url.isEmpty()) {
-                Picasso.with(context).load(pl3Url)
-                        .placeholder(R.drawable.account)
-                        .error(R.drawable.ic_info_black_48px)
-                        .fit().into(holder.imgPlayer3);
+
+            if (null != player3) {
+                setPlayer(context, player3, holder.txtPlayer3Name, holder.imgPlayer3);
             }
-            holder.txtPlayer4Name.setText(player4.getDisplayName());
-            String pl4Url = player4.getImage();
-            if (null != pl4Url && !pl4Url.isEmpty()) {
-                Picasso.with(context).load(pl4Url)
-                        .placeholder(R.drawable.account)
-                        .error(R.drawable.ic_info_black_48px)
-                        .fit().into(holder.imgPlayer4);
+
+            if (null != player4) {
+                setPlayer(context, player4, holder.txtPlayer4Name, holder.imgPlayer4);
             }
 
             //Set Game Score
-            String score = team1.getScores() + ":" + team2.getScores();
             holder.txtGameScore.setText(score);
         }
+    }
+
+    private void setPlayer(Context context, Player player, TextView txtName, ImageView imgAvatar) {
+        if (player == null || context == null) {
+            return;
+        }
+
+        String avatarUrl = player.getImage();
+        txtName.setText(player.getDisplayName());
+        Picasso.with(context).load(avatarUrl)
+                .placeholder(R.drawable.account)
+                .error(R.drawable.ic_info_black_48px)
+                .fit().into(imgAvatar);
     }
 
     @Override

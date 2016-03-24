@@ -1,5 +1,7 @@
 package com.g_art.kickerapp.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 import java.util.List;
 
@@ -12,8 +14,11 @@ public class Game {
     private Player createdBy;
     private String name;
     private int wins;
+    @SerializedName("status")
+    private GameState state;
     private Date date;
     private List<Team> teams;
+    private List<Player> players;
 
     public Game() {
     }
@@ -65,6 +70,14 @@ public class Game {
         this.wins = wins;
     }
 
+    public GameState getState() {
+        return state;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
     public Date getDate() {
         return date;
     }
@@ -79,5 +92,13 @@ public class Game {
 
     public void setTeams(List<Team> teams) {
         this.teams = teams;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
     }
 }
