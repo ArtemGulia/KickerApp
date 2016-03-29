@@ -67,7 +67,10 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     private TextView mTxtPlayerName;
     private CircleImageView mImgNavPlayerAvatar;
     private ActionBarDrawerToggle toggle;
+
+    private FloatingActionButton okFab;
     private FloatingActionButton addFab;
+
     private DrawerLayout drawer;
 
     private Fragment mFragment;
@@ -129,6 +132,12 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         addFab = (FloatingActionButton) findViewById(R.id.fab);
         if (addFab != null) {
             addFab.setOnClickListener(this);
+        }
+
+        okFab = (FloatingActionButton) findViewById(R.id.okFab);
+        if (okFab != null) {
+            okFab.hide();
+            okFab.setOnClickListener(this);
         }
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -355,6 +364,11 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
             case R.id.fab:
                 openGameFragment();
                 break;
+            case R.id.okFab:
+                Snackbar.make(findViewById(R.id.contentContainer),
+                    "Create Game!!",
+                    Snackbar.LENGTH_LONG).show();
+                break;
             case R.id.nav_header_player_avatar:
                 openPlayerProfileFromNV();
                 break;
@@ -457,6 +471,18 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
+    public void showOkFab() {
+        if (okFab != null) {
+            okFab.show();
+        }
+    }
+
+    public void hideOkFab() {
+        if (okFab != null) {
+            okFab.hide();
+        }
+    }
+
     public void showAddFab() {
         if (addFab != null) {
             addFab.show();
@@ -464,6 +490,8 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void hideAddFab() {
-        addFab.hide();
+        if (addFab != null) {
+            addFab.hide();
+        }
     }
 }

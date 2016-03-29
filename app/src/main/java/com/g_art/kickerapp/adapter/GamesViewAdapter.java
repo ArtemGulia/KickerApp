@@ -61,10 +61,10 @@ public class GamesViewAdapter extends RecyclerView.Adapter<GamesViewAdapter.View
                 Team team1 = game.getTeams().get(0);
                 Team team2 = game.getTeams().get(1);
 
-                player1 = team1.getPlayerList().get(0);
-                player2 = team1.getPlayerList().get(1);
-                player3 = team2.getPlayerList().get(0);
-                player4 = team2.getPlayerList().get(1);
+                player1 = team1.getPlayers().get(0);
+                player2 = team1.getPlayers().get(1);
+                player3 = team2.getPlayers().get(0);
+                player4 = team2.getPlayers().get(1);
 
                 score = team1.getScores() + ":" + team2.getScores();
             }

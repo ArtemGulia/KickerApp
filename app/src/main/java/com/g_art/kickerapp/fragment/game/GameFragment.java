@@ -26,6 +26,9 @@ import com.g_art.kickerapp.utils.api.GameApi;
 import com.g_art.kickerapp.utils.rest.RestClient;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import retrofit.Callback;
@@ -71,9 +74,14 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
         if (mIsNewGame) {
             ((KickerAppActivity) getActivity()).hideAddFab();
+            ((KickerAppActivity) getActivity()).showOkFab();
             mSwipeRefreshLayout.setRefreshing(false);
             mSwipeRefreshLayout.setEnabled(false);
+
+            Game newGame = createGame(mPlayer);
+            updateUI(newGame);
         } else {
+            ((KickerAppActivity) getActivity()).hideOkFab();
             ((KickerAppActivity) getActivity()).showAddFab();
             mProgressBar.setVisibility(View.VISIBLE);
             mGameViewHolder.setVisibility(View.GONE);
@@ -107,6 +115,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onDestroy() {
+        ((KickerAppActivity) getActivity()).hideOkFab();
         ((KickerAppActivity) getActivity()).showAddFab();
         ((KickerAppActivity) getActivity()).enableNavigation();
         super.onDestroy();
@@ -117,28 +126,50 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         int id = v.getId();
         switch (id) {
             case R.id.rl_team1:
-                showPlayerInfo(mGame.getTeams().get(0).getPlayerList().get(0));
+                showPlayerInfo(mGame.getTeams().get(0).getPlayers().get(0));
                 break;
 
             case R.id.rl_team2:
-                showPlayerInfo(mGame.getTeams().get(1).getPlayerList().get(0));
+                showPlayerInfo(mGame.getTeams().get(1).getPlayers().get(0));
                 break;
 
             case R.id.cv_game_team1:
-                showPlayerInfo(mGame.getTeams().get(0).getPlayerList().get(0));
+                showPlayerInfo(mGame.getTeams().get(0).getPlayers().get(0));
                 break;
 
             case R.id.cv_game_team2:
-                showPlayerInfo(mGame.getTeams().get(1).getPlayerList().get(0));
+                showPlayerInfo(mGame.getTeams().get(1).getPlayers().get(0));
                 break;
 
             case R.id.mr_game_team1:
-                showPlayerInfo(mGame.getTeams().get(0).getPlayerList().get(0));
+                showPlayerInfo(mGame.getTeams().get(0).getPlayers().get(0));
                 break;
 
             case R.id.mr_game_team2:
-                showPlayerInfo(mGame.getTeams().get(1).getPlayerList().get(0));
+                showPlayerInfo(mGame.getTeams().get(1).getPlayers().get(0));
                 break;
+        }
+    }
+
+    private Game createGame(Player player) {
+        if (player != null) {
+            Game game = new Game();
+
+            game.setCreatedBy(player);
+            game.addPlayer(player);
+
+            Team team_1 = new Team();
+            team_1.addPlayer(player);
+            Team team_2 = new Team();
+            List<Team> teamList = new ArrayList<>();
+
+            teamList.add(team_1);
+            teamList.add(team_2);
+
+            game.setTeams(teamList);
+            return game;
+        } else {
+            return null;
         }
     }
 
@@ -275,8 +306,8 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         }
 
         public void setTeamF(Context context, Team teamF) {
-            if (teamF != null && teamF.getPlayerList() != null && !teamF.getPlayerList().isEmpty()) {
-                List<Player> playersTeamF = teamF.getPlayerList();
+            if (teamF != null && teamF.getPlayers() != null && !teamF.getPlayers().isEmpty()) {
+                List<Player> playersTeamF = teamF.getPlayers();
 
                 Player playerF = playersTeamF.get(0);
                 setPlayerF(context, playerF);
@@ -289,8 +320,8 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         }
 
         public void setTeamS(Context context, Team teamS) {
-            if (teamS != null && teamS.getPlayerList() != null && !teamS.getPlayerList().isEmpty()) {
-                List<Player> playersTeamS = teamS.getPlayerList();
+            if (teamS != null && teamS.getPlayers() != null && !teamS.getPlayers().isEmpty()) {
+                List<Player> playersTeamS = teamS.getPlayers();
 
                 Player playerT = playersTeamS.get(0);
                 setPlayerT(context, playerT);

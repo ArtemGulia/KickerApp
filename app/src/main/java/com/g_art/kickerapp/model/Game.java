@@ -2,6 +2,7 @@ package com.g_art.kickerapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,14 +22,19 @@ public class Game {
     private List<Player> players;
 
     public Game() {
+        players = new ArrayList<>();
+        teams = new ArrayList<>();
+        date = new Date();
+        state = GameState.CREATED;
     }
 
     public Game(String _id) {
+        this();
         this._id = _id;
     }
 
     public Game(String _id, String name) {
-        this._id = _id;
+        this(_id);
         this.name = name;
     }
 
@@ -36,6 +42,13 @@ public class Game {
         this.name = name;
         this.date = date;
         this.teams = teams;
+    }
+
+    public void addPlayer(Player player) {
+        if (players == null) {
+            players = new ArrayList<>();
+        }
+        players.add(player);
     }
 
     public String get_id() {
