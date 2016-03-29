@@ -92,13 +92,18 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_home);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View header = navigationView.getHeaderView(0);
-        header.setOnClickListener(this);
+        View header = null;
+        if (navigationView != null) {
+            header = navigationView.getHeaderView(0);
+            navigationView.setNavigationItemSelectedListener(this);
+        }
 
-        mTxtPlayerName = (TextView) header.findViewById(R.id.txt_nav_header_player_name);
-        mImgNavPlayerAvatar = (CircleImageView) header.findViewById(R.id.nav_header_player_avatar);
+        if (header != null) {
+            header.setOnClickListener(this);
+            mTxtPlayerName = (TextView) header.findViewById(R.id.txt_nav_header_player_name);
+            mImgNavPlayerAvatar = (CircleImageView) header.findViewById(R.id.nav_header_player_avatar);
+        }
         mImgNavPlayerAvatar.setOnClickListener(this);
-        navigationView.setNavigationItemSelectedListener(this);
 
         if (savedInstanceState != null) {
             //Restore the fragment's instance
@@ -109,7 +114,9 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
             if (item_id == 0) {
                 uncheckAllMenuItems(navigationView);
             } else {
-                navigationView.setCheckedItem(item_id);
+                if (navigationView != null) {
+                    navigationView.setCheckedItem(item_id);
+                }
             }
         } else {
             checkLogin();
@@ -120,7 +127,9 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         setSupportActionBar(toolbar);
 
         addFab = (FloatingActionButton) findViewById(R.id.fab);
-        addFab.setOnClickListener(this);
+        if (addFab != null) {
+            addFab.setOnClickListener(this);
+        }
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
@@ -130,16 +139,18 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 
         registerBackStackListener();
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                    getSupportFragmentManager().popBackStack();
-                } else {
-                    drawer.openDrawer(GravityCompat.START);
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                        getSupportFragmentManager().popBackStack();
+                    } else {
+                        drawer.openDrawer(GravityCompat.START);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void checkLogin() {
@@ -160,8 +171,12 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawer != null) {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
         } else {
             super.onBackPressed();
         }
@@ -327,7 +342,9 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        if (drawer != null) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
         return true;
     }
 
@@ -358,8 +375,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         Bundle bundle = new Bundle();
         bundle.putParcelable(PLAYER_KEY, mPlayer);
 
-        boolean isNewGame = true;
-        bundle.putBoolean(NEW_GAME_KEY, isNewGame);
+        bundle.putBoolean(NEW_GAME_KEY, true);
 
         // Create new fragment and transaction
         FragmentManager fragmentManager = getSupportFragmentManager();
