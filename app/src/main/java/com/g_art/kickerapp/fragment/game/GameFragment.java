@@ -70,11 +70,11 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         }
 
         if (mIsNewGame) {
-            ((KickerAppActivity) getActivity()).hideFab();
+            ((KickerAppActivity) getActivity()).hideAddFab();
             mSwipeRefreshLayout.setRefreshing(false);
             mSwipeRefreshLayout.setEnabled(false);
         } else {
-            ((KickerAppActivity) getActivity()).showFab();
+            ((KickerAppActivity) getActivity()).showAddFab();
             mProgressBar.setVisibility(View.VISIBLE);
             mGameViewHolder.setVisibility(View.GONE);
             requestForData();
@@ -107,7 +107,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onDestroy() {
-        ((KickerAppActivity) getActivity()).showFab();
+        ((KickerAppActivity) getActivity()).showAddFab();
         ((KickerAppActivity) getActivity()).enableNavigation();
         super.onDestroy();
     }

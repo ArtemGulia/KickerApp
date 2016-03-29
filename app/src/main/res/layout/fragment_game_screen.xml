@@ -29,7 +29,7 @@
                 android:id="@+id/cv_game_team1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginBottom="2dp"
                 app:cardCornerRadius="2dp">
 
                 <com.balysv.materialripple.MaterialRippleLayout
@@ -111,7 +111,8 @@
                 android:layout_below="@+id/cv_game_vs"
                 android:layout_centerHorizontal="true"
                 android:gravity="center_vertical|center_horizontal"
-                android:padding="3dp"
+                android:padding="5dp"
+                android:layout_marginBottom="5dp"
                 android:text="@string/score_number"
                 android:textSize="20sp"/>
 
@@ -120,8 +121,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/cv_game_score"
-                android:layout_marginTop="5dp"
-                android:padding="1dp"
+                android:layout_marginBottom="2dp"
                 app:cardCornerRadius="2dp">
 
                 <com.balysv.materialripple.MaterialRippleLayout

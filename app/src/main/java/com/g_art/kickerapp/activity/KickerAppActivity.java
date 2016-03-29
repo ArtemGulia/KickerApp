@@ -439,13 +439,13 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
-    public void showFab() {
+    public void showAddFab() {
         if (fab != null) {
             fab.show();
         }
     }
 
-    public void hideFab() {
+    public void hideAddFab() {
         fab.hide();
     }
 }
