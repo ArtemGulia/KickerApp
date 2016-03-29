@@ -67,7 +67,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     private TextView mTxtPlayerName;
     private CircleImageView mImgNavPlayerAvatar;
     private ActionBarDrawerToggle toggle;
-    private FloatingActionButton fab;
+    private FloatingActionButton addFab;
     private DrawerLayout drawer;
 
     private Fragment mFragment;
@@ -119,8 +119,8 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(this);
+        addFab = (FloatingActionButton) findViewById(R.id.fab);
+        addFab.setOnClickListener(this);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
@@ -411,7 +411,9 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         uncheckAllMenuItems(navigationView);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        if (drawer != null) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
     }
 
     private void uncheckAllMenuItems(NavigationView navigationView) {
@@ -440,12 +442,12 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void showAddFab() {
-        if (fab != null) {
-            fab.show();
+        if (addFab != null) {
+            addFab.show();
         }
     }
 
     public void hideAddFab() {
-        fab.hide();
+        addFab.hide();
     }
 }
