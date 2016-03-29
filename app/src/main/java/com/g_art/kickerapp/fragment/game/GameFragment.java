@@ -116,20 +116,28 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         int id = v.getId();
         switch (id) {
-            case R.id.cv_game_player1:
+            case R.id.rl_team1:
                 showPlayerInfo(mGame.getTeams().get(0).getPlayerList().get(0));
                 break;
 
-            case R.id.cv_game_player2:
-                showPlayerInfo(mGame.getTeams().get(0).getPlayerList().get(1));
-                break;
-
-            case R.id.cv_game_player3:
+            case R.id.rl_team2:
                 showPlayerInfo(mGame.getTeams().get(1).getPlayerList().get(0));
                 break;
 
-            case R.id.cv_game_player4:
-                showPlayerInfo(mGame.getTeams().get(1).getPlayerList().get(1));
+            case R.id.cv_game_team1:
+                showPlayerInfo(mGame.getTeams().get(0).getPlayerList().get(0));
+                break;
+
+            case R.id.cv_game_team2:
+                showPlayerInfo(mGame.getTeams().get(1).getPlayerList().get(0));
+                break;
+
+            case R.id.mr_game_team1:
+                showPlayerInfo(mGame.getTeams().get(0).getPlayerList().get(0));
+                break;
+
+            case R.id.mr_game_team2:
+                showPlayerInfo(mGame.getTeams().get(1).getPlayerList().get(0));
                 break;
         }
     }
@@ -171,70 +179,62 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
     public static class GameViewHolder {
 
-        public CardView gameCardView;
+        public CardView cv_game_team1;
+        public CardView cv_game_team2;
 
-//        public MaterialRippleLayout mrPlayer1;
-        public CardView cvPlayer1;
+        public MaterialRippleLayout mr_game_team1;
+        public MaterialRippleLayout mr_game_team2;
+
         public ImageView imgPlayer1;
         public TextView txtPlayer1Name;
 
-//        public MaterialRippleLayout mrPlayer2;
-        public CardView cvPlayer2;
         public ImageView imgPlayer2;
         public TextView txtPlayer2Name;
 
-//        public MaterialRippleLayout mrPlayer3;
-        public CardView cvPlayer3;
         public ImageView imgPlayer3;
         public TextView txtPlayer3Name;
 
-//        public MaterialRippleLayout mrPlayer4;
-        public CardView cvPlayer4;
         public ImageView imgPlayer4;
         public TextView txtPlayer4Name;
 
         public TextView txtGameScore;
+        public TextView txtGameVS;
 
         // inner class to hold a reference to each item of RecyclerView
         public GameViewHolder(View itemView) {
-            gameCardView = (CardView) itemView.findViewById(R.id.cv_game);
+            cv_game_team1 = (CardView) itemView.findViewById(R.id.cv_game_team1);
+            cv_game_team2 = (CardView) itemView.findViewById(R.id.cv_game_team2);
+            mr_game_team1 = (MaterialRippleLayout) itemView.findViewById(R.id.mr_game_team1);
+            mr_game_team2 = (MaterialRippleLayout) itemView.findViewById(R.id.mr_game_team2);
 
-//            mrPlayer1 = (MaterialRippleLayout) itemView.findViewById(R.id.mr_game_player1);
-            cvPlayer1 = (CardView) itemView.findViewById(R.id.cv_game_player1);
             imgPlayer1 = (ImageView) itemView.findViewById(R.id.cv_game_player1_avatar);
             txtPlayer1Name = (TextView) itemView.findViewById(R.id.cv_game_player1_name);
 
-//            mrPlayer2 = (MaterialRippleLayout) itemView.findViewById(R.id.mr_game_player2);
-            cvPlayer2 = (CardView) itemView.findViewById(R.id.cv_game_player2);
             imgPlayer2 = (ImageView) itemView.findViewById(R.id.cv_game_player2_avatar);
             txtPlayer2Name = (TextView) itemView.findViewById(R.id.cv_game_player2_name);
 
-//            mrPlayer3 = (MaterialRippleLayout) itemView.findViewById(R.id.mr_game_player3);
-            cvPlayer3 = (CardView) itemView.findViewById(R.id.cv_game_player3);
             imgPlayer3 = (ImageView) itemView.findViewById(R.id.cv_game_player3_avatar);
             txtPlayer3Name = (TextView) itemView.findViewById(R.id.cv_game_player3_name);
 
-//            mrPlayer4 = (MaterialRippleLayout) itemView.findViewById(R.id.mr_game_player4);
-            cvPlayer4 = (CardView) itemView.findViewById(R.id.cv_game_player4);
             imgPlayer4 = (ImageView) itemView.findViewById(R.id.cv_game_player4_avatar);
             txtPlayer4Name = (TextView) itemView.findViewById(R.id.cv_game_player4_name);
 
+            txtGameVS = (TextView) itemView.findViewById(R.id.cv_game_vs);
             txtGameScore = (TextView) itemView.findViewById(R.id.cv_game_score);
         }
 
         public void setOnClickListener(View.OnClickListener onClickListener) {
-            cvPlayer1.setOnClickListener(onClickListener);
-            cvPlayer2.setOnClickListener(onClickListener);
-            cvPlayer3.setOnClickListener(onClickListener);
-            cvPlayer4.setOnClickListener(onClickListener);
-//            mrPlayer1.setOnClickListener(onClickListener);
-//            mrPlayer2.setOnClickListener(onClickListener);
-//            mrPlayer3.setOnClickListener(onClickListener);
-//            mrPlayer4.setOnClickListener(onClickListener);
+            cv_game_team1.setOnClickListener(onClickListener);
+            cv_game_team2.setOnClickListener(onClickListener);
+            mr_game_team1.setOnClickListener(onClickListener);
+            mr_game_team2.setOnClickListener(onClickListener);
         }
 
         public void setVisibility(int visibility) {
-            gameCardView.setVisibility(visibility);
+            cv_game_team1.setVisibility(visibility);
+            cv_game_team2.setVisibility(visibility);
+            txtGameScore.setVisibility(visibility);
+            txtGameVS.setVisibility(visibility);
         }
 
         public void setGame(Context context, Game mGame) {

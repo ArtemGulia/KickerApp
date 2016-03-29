@@ -25,6 +25,7 @@ import com.g_art.kickerapp.utils.RecyclerItemClickListener;
 import com.g_art.kickerapp.utils.api.GameApi;
 import com.g_art.kickerapp.utils.rest.RestClient;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,6 +58,7 @@ public class GamesFragment extends Fragment {
         setRetainInstance(true);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.game_list_swipe);
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -75,7 +77,7 @@ public class GamesFragment extends Fragment {
         // 2. set layoutManger
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         // 3. create an adapter
-        mAdapter = new GamesViewAdapter(getActivity(), Collections.<Game>emptyList());
+        mAdapter = new GamesViewAdapter(getActivity(), new ArrayList<Game>());
         // 4. set adapter
         mRecyclerView.setAdapter(mAdapter);
         // 5. set item animator to DefaultAnimator
@@ -140,7 +142,8 @@ public class GamesFragment extends Fragment {
             @Override
             public void success(List<Game> games, Response response) {
                 if (response != null) {
-                    mAdapter.updateData(games);
+                    mAdapter.clear();
+                    mAdapter.addAll(games);
                     onItemsLoadComplete();
                 }
             }
@@ -159,8 +162,7 @@ public class GamesFragment extends Fragment {
         // Stop refresh animation
         mSwipeRefreshLayout.setRefreshing(false);
         mProgressBar.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.VISIBLE);
-
         mAdapter.notifyDataSetChanged();
+        mRecyclerView.setVisibility(View.VISIBLE);
     }
 }

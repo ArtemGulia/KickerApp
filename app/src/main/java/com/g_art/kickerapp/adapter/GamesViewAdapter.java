@@ -114,8 +114,16 @@ public class GamesViewAdapter extends RecyclerView.Adapter<GamesViewAdapter.View
         return gameList.size();
     }
 
-    public void updateData(List<Game> gameList) {
-        this.gameList = gameList;
+    public void clear(){
+        if (this.gameList != null) {
+            this.gameList.clear();
+        }
+    }
+
+    public void addAll(List<Game> gameList) {
+        if (this.gameList != null) {
+            this.gameList.addAll(gameList);
+        }
     }
 
     public Game getGameByPosition(int position) {
