@@ -14,5 +14,11 @@ public interface GameService {
 
     Game createGame(Team fTeam, Team sTeam);
 
-    Game createGame(Player... player);
+    Game createGame(Player player);
+
+    void addPlayerToFTeam(Game game, Player player);
+
+    boolean isPlayerFits(Game game, Team team);
+
+    boolean isPlayerFits(Game game, Team team, Player player);
 }

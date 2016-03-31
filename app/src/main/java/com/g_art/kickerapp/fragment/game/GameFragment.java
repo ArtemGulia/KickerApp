@@ -22,6 +22,7 @@ import com.g_art.kickerapp.model.Game;
 import com.g_art.kickerapp.model.Player;
 import com.g_art.kickerapp.model.Team;
 import com.g_art.kickerapp.services.GameService;
+import com.g_art.kickerapp.services.impl.GameServiceImpl;
 import com.g_art.kickerapp.utils.api.GameApi;
 import com.g_art.kickerapp.utils.rest.RestClient;
 import com.squareup.picasso.Picasso;
@@ -55,6 +56,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mGameService = new GameServiceImpl();
         view = inflater.inflate(R.layout.fragment_game_screen, container, false);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.game_screen_swipe);
@@ -78,7 +80,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             mSwipeRefreshLayout.setRefreshing(false);
             mSwipeRefreshLayout.setEnabled(false);
 
-            Game newGame = createGame(mPlayer);
+            Game newGame = mGameService.createGame(mPlayer);
             updateUI(newGame);
         } else {
             ((KickerAppActivity) getActivity()).hideOkFab();
@@ -126,51 +128,52 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         int id = v.getId();
         switch (id) {
             case R.id.rl_team1:
-                showPlayerInfo(mGame.getTeams().get(0).getPlayers().get(0));
+                if (mIsNewGame) {
+                    //todo check the players number in team.
+                    if (isPlayerFits(mGame, mGame.getTeams().get(0)) ) {
+
+                    } else {
+
+                    }
+                    //todo if already 2 open the menu for changing them
+
+                } else {
+                    //todo check the game status. if active: check the max. score. add if 1 if possible
+                    //todo if non active - do nothing
+                    showPlayerInfo(mGame.getTeams().get(0).getPlayers().get(0));
+                }
                 break;
 
             case R.id.rl_team2:
-                showPlayerInfo(mGame.getTeams().get(1).getPlayers().get(0));
-                break;
+                if (mIsNewGame) {
+                    //todo check the players number in team.
+                    if (isPlayerFits(mGame, mGame.getTeams().get(1)) ) {
 
-            case R.id.cv_game_team1:
-                showPlayerInfo(mGame.getTeams().get(0).getPlayers().get(0));
-                break;
+                    } else {
+                        //todo if already 2 open the menu for changing them
+                    }
 
-            case R.id.cv_game_team2:
-                showPlayerInfo(mGame.getTeams().get(1).getPlayers().get(0));
-                break;
-
-            case R.id.mr_game_team1:
-                showPlayerInfo(mGame.getTeams().get(0).getPlayers().get(0));
-                break;
-
-            case R.id.mr_game_team2:
-                showPlayerInfo(mGame.getTeams().get(1).getPlayers().get(0));
+                } else {
+                    //todo check the game status. if active: check the max. score. add if 1 if possible
+                    //todo if non active - do nothing
+                    showPlayerInfo(mGame.getTeams().get(1).getPlayers().get(0));
+                }
                 break;
         }
     }
 
-    private Game createGame(Player player) {
-        if (player != null) {
-            Game game = new Game();
-
-            game.setCreatedBy(player);
-            game.addPlayer(player);
-
-            Team team_1 = new Team();
-            team_1.addPlayer(player);
-            Team team_2 = new Team();
-            List<Team> teamList = new ArrayList<>();
-
-            teamList.add(team_1);
-            teamList.add(team_2);
-
-            game.setTeams(teamList);
-            return game;
-        } else {
-            return null;
+    private void addPlayerToTeam(Team team, Player player) {
+        if (team != null && player != null) {
+            mGameService.addPlayerToFTeam(mGame, player);
         }
+    }
+
+    private boolean isPlayerFits(Game game, Team team) {
+        return mGameService.isPlayerFits(game, team);
+    }
+
+    private boolean isPlayerFits(Game game, Team team, Player player) {
+        return mGameService.isPlayerFits(game, team, player);
     }
 
     private void showPlayerInfo(Player player) {

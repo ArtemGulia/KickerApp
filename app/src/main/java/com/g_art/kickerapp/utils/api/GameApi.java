@@ -1,6 +1,7 @@
 package com.g_art.kickerapp.utils.api;
 
 import com.g_art.kickerapp.model.Game;
+import com.g_art.kickerapp.model.Player;
 
 import java.util.List;
 
@@ -16,7 +17,13 @@ import retrofit.http.POST;
  */
 public interface GameApi {
 
-    void createGame(Game game, Callback<Game> callback);
+    @Headers("Content-Type: application/json")
+    @POST("")
+    void createGame(@Body Game game, Callback<Game> callback);
+
+    @Headers("Content-Type: application/json")
+    @POST("/games/players")
+    void getPlayersForTheGame(@Body Game game, Callback<List<Player>> callback);
 
     @Headers("Content-Type: application/json")
     @POST("/game/get")

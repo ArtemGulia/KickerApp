@@ -57,6 +57,7 @@ dependencies {
     //External Support Libraries
     compile 'com.github.nkzawa:socket.io-client:0.3.0'
     compile 'com.google.code.gson:gson:2.4'
+    compile 'io.github.yavski:fab-speed-dial:1.0.3'
 
     //Social
     //Facebook
