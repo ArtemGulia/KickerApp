@@ -108,6 +108,19 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         }
         mImgNavPlayerAvatar.setOnClickListener(this);
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            Player value = extras.getParcelable(PLAYER_KEY);
+            if (value != null) {
+                mPlayer = value;
+                signUp = false;
+
+                Snackbar.make(findViewById(R.id.contentContainer),
+                        mPlayer.getDisplayName() + " via " + mPlayer.getProvider(),
+                        Snackbar.LENGTH_LONG).show();
+            }
+        }
+
         if (savedInstanceState != null) {
             //Restore the fragment's instance
             signUp = savedInstanceState.getBoolean(SIGN_UP);
@@ -173,6 +186,8 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
             signUp = false;
             if (mPlayer == null || RestClient.getsSessionId() == null) {
                 authorizeUser();
+            } else {
+                openPlayerProfile(mPlayer);
             }
         }
     }
@@ -211,7 +226,12 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
             if (resultCode == RESULT_OK) {
                 mPlayer = data.getParcelableExtra("player");
                 signUp = false;
+
+                Snackbar.make(findViewById(R.id.contentContainer),
+                        mPlayer.getDisplayName() + " via " + mPlayer.getProvider(),
+                        Snackbar.LENGTH_LONG).show();
                 openPlayerProfile(mPlayer);
+
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(getApplicationContext(), data.getStringExtra("resultMsg"),
                         Toast.LENGTH_LONG).show();
