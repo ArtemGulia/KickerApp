@@ -51,6 +51,28 @@ public class Game {
         players.add(player);
     }
 
+    public Team getFTeam() {
+        if (teams == null || teams.isEmpty()) {
+            initTeams();
+        }
+        return teams.get(0);
+    }
+
+    public Team getSTeam() {
+        if (teams == null || teams.isEmpty()) {
+            initTeams();
+        }
+        return teams.get(1);
+    }
+
+    private void initTeams() {
+        teams = new ArrayList<>();
+        Team fTeam = new Team();
+        Team sTeam = new Team();
+        teams.add(fTeam);
+        teams.add(sTeam);
+    }
+
     public String get_id() {
         return _id;
     }
@@ -83,10 +105,12 @@ public class Game {
         this.wins = wins;
     }
 
+    @SerializedName("status")
     public GameState getState() {
         return state;
     }
 
+    @SerializedName("status")
     public void setState(GameState state) {
         this.state = state;
     }

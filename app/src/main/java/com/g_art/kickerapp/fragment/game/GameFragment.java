@@ -19,6 +19,7 @@ import com.balysv.materialripple.MaterialRippleLayout;
 import com.g_art.kickerapp.R;
 import com.g_art.kickerapp.activity.KickerAppActivity;
 import com.g_art.kickerapp.model.Game;
+import com.g_art.kickerapp.model.GameState;
 import com.g_art.kickerapp.model.Player;
 import com.g_art.kickerapp.model.Team;
 import com.g_art.kickerapp.services.GameService;
@@ -30,7 +31,9 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -128,38 +131,79 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         int id = v.getId();
         switch (id) {
             case R.id.rl_team1:
-                if (mIsNewGame) {
-                    //todo check the players number in team.
-                    if (isPlayerFits(mGame, mGame.getTeams().get(0)) ) {
-
-                    } else {
-
-                    }
-                    //todo if already 2 open the menu for changing them
-
-                } else {
-                    //todo check the game status. if active: check the max. score. add if 1 if possible
-                    //todo if non active - do nothing
-                    showPlayerInfo(mGame.getTeams().get(0).getPlayers().get(0));
-                }
+                onTeamClick(mGame.getFTeam());
                 break;
 
             case R.id.rl_team2:
-                if (mIsNewGame) {
-                    //todo check the players number in team.
-                    if (isPlayerFits(mGame, mGame.getTeams().get(1)) ) {
-
-                    } else {
-                        //todo if already 2 open the menu for changing them
-                    }
-
-                } else {
-                    //todo check the game status. if active: check the max. score. add if 1 if possible
-                    //todo if non active - do nothing
-                    showPlayerInfo(mGame.getTeams().get(1).getPlayers().get(0));
-                }
+                onTeamClick(mGame.getSTeam());
                 break;
         }
+    }
+
+    private void onTeamClick(Team team) {
+        if (mIsNewGame) {
+            // TODO: 1/4/2016 add or change players
+
+            // TODO: 31/3/2016 Get available players for the game
+            getAvailablePlayers(mGame);
+
+        } else {
+            GameState gState = mGame.getState();
+            switch (gState) {
+                case ACTIVE:
+                    int wScore = mGame.getWins();
+                    int tScore = team.getScores();
+                    if (tScore < wScore) {
+                        addScore(team.get_id());
+                    }
+                    break;
+                case CREATED:
+                    getAvailablePlayers(mGame);
+                    break;
+                case READY:
+                    getAvailablePlayers(mGame);
+                    break;
+                case FINISHED:
+                    Toast.makeText(getActivity(), "Game is already finished", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    }
+
+    private void addScore(String teamId) {
+        GameApi gameApi = RestClient.getGameApi();
+        Map<String, String> params = new HashMap<>();
+        params.put("gameId", mGameId);
+        params.put("teamId", teamId);
+        gameApi.addScore(params, new Callback<Game>() {
+            @Override
+            public void success(Game game, Response response) {
+                updateUI(game);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(getActivity(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void getAvailablePlayers(Game mGame) {
+        GameApi gameApi = RestClient.getGameApi();
+
+        gameApi.getPlayersForTheGame(mGame, new Callback<List<Player>>() {
+            @Override
+            public void success(List<Player> players, Response response) {
+                if (!players.isEmpty()) {
+                    Toast.makeText(getActivity(), "Have "+ players.size() + " players", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(getActivity(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void addPlayerToTeam(Team team, Player player) {

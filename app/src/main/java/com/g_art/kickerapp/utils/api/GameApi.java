@@ -4,6 +4,7 @@ import com.g_art.kickerapp.model.Game;
 import com.g_art.kickerapp.model.Player;
 
 import java.util.List;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.http.Body;
@@ -18,8 +19,8 @@ import retrofit.http.POST;
 public interface GameApi {
 
     @Headers("Content-Type: application/json")
-    @POST("")
-    void createGame(@Body Game game, Callback<Game> callback);
+    @POST("/games/create")
+    void createGame(Player user, Callback<Game> callback);
 
     @Headers("Content-Type: application/json")
     @POST("/games/players")
@@ -33,4 +34,8 @@ public interface GameApi {
 
     @GET("/games/list")
     void getAllGames(Callback<List<Game>> callback);
+
+    @Headers("Content-Type: application/json")
+    @POST("/games/addScore")
+    void addScore(@Body Map<String, String> params, Callback<Game> callback);
 }
