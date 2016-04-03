@@ -1,4 +1,4 @@
-package com.g_art.kickerapp.fragment;
+package com.g_art.kickerapp.fragment.profile;
 
 
 import android.media.Image;
@@ -147,6 +147,7 @@ public class PlayerFragment extends Fragment {
         if (actionBar != null) {
             actionBar.setTitle(R.string.profile_screen);
         }
+        ((KickerAppActivity)getActivity()).showAddFab();
     }
 
     void onItemsLoadComplete() {

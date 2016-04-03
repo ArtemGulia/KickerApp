@@ -81,7 +81,7 @@ public class GamesViewAdapter extends RecyclerView.Adapter<GamesViewAdapter.View
             }
 
             if (null != player2) {
-                setPlayer(context, player2, holder.txtPlayer2Name, holder.imgPlayer3);
+                setPlayer(context, player2, holder.txtPlayer2Name, holder.imgPlayer2);
             }
 
             if (null != player3) {

@@ -24,7 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.g_art.kickerapp.R;
-import com.g_art.kickerapp.fragment.PlayerFragment;
+import com.g_art.kickerapp.fragment.profile.PlayerFragment;
 import com.g_art.kickerapp.fragment.game.GameFragment;
 import com.g_art.kickerapp.fragment.game.GamesFragment;
 import com.g_art.kickerapp.fragment.tournament.TournamentsFragment;
@@ -117,7 +117,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 
                 Snackbar.make(findViewById(R.id.contentContainer),
                         mPlayer.getDisplayName() + " via " + mPlayer.getProvider(),
-                        Snackbar.LENGTH_LONG).show();
+                        Snackbar.LENGTH_SHORT).show();
             }
         }
 
@@ -178,11 +178,9 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     private void checkLogin() {
         if (!loginHandler.isLogged()) {
             Intent loginIntent = new Intent(this, LoginActivity.class);
-//            loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             signUp = true;
             startActivityForResult(loginIntent, LOGIN_REQUEST_CODE);
         } else {
-            //TODO getSession
             signUp = false;
             if (mPlayer == null || RestClient.getsSessionId() == null) {
                 authorizeUser();
@@ -492,25 +490,25 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void showOkFab() {
-        if (okFab != null) {
+        if (okFab != null && !okFab.isShown()) {
             okFab.show();
         }
     }
 
     public void hideOkFab() {
-        if (okFab != null) {
+        if (okFab != null && okFab.isShown()) {
             okFab.hide();
         }
     }
 
     public void showAddFab() {
-        if (addFab != null) {
+        if (addFab != null && !addFab.isShown()) {
             addFab.show();
         }
     }
 
     public void hideAddFab() {
-        if (addFab != null) {
+        if (addFab != null && addFab.isShown()) {
             addFab.hide();
         }
     }

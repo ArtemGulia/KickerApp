@@ -20,15 +20,16 @@
             >
 
             <android.support.v7.widget.CardView
-                android:id="@+id/cv_player1"
+                android:id="@+id/cv_team1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginBottom="5dp"
-                android:layout_toLeftOf="@+id/game_vs"
-                app:cardCornerRadius="2dp">
+                android:layout_toLeftOf="@+id/game_score"
+                app:cardCornerRadius="2dp"
+                app:cardBackgroundColor="@color/blue_team"
+                android:layout_marginRight="5dp">
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -52,39 +53,18 @@
                         android:layout_marginRight="2dp"
                         android:layout_toRightOf="@+id/game_player1_avatar"
                         android:gravity="center_vertical"
-                        android:text="Player1"/>
-
-                </RelativeLayout>
-
-
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/cv_player2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="false"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="false"
-                android:layout_alignRight="@+id/cv_player1"
-                android:layout_below="@+id/cv_player1"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                app:cardCornerRadius="2dp">
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                        android:text="@string/player_name_value"/>
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/game_player2_avatar"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_alignParentTop="true"
+                        android:layout_alignParentTop="false"
                         android:layout_margin="5dp"
                         android:src="@drawable/account"
                         app:civ_border_color="#FF000000"
-                        app:civ_border_width="2dp"/>
+                        app:civ_border_width="2dp"
+                        android:layout_below="@+id/game_player1_avatar"/>
 
                     <TextView
                         android:id="@+id/game_player2_name"
@@ -95,46 +75,33 @@
                         android:layout_marginRight="2dp"
                         android:layout_toRightOf="@+id/game_player2_avatar"
                         android:gravity="center_vertical"
-                        android:text="Player2"/>
+                        android:text="@string/player_name_value"/>
 
                 </RelativeLayout>
 
-            </android.support.v7.widget.CardView>
 
-            <TextView
-                android:id="@+id/game_vs"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/cv_player3"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:padding="5dp"
-                android:text="VS"
-                android:textSize="15sp"/>
+            </android.support.v7.widget.CardView>
 
             <TextView
                 android:id="@+id/game_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/game_vs"
-                android:layout_alignRight="@+id/game_vs"
-                android:layout_alignTop="@+id/cv_player2"
-                android:layout_below="@+id/game_vs"
                 android:gravity="center_vertical|center_horizontal"
-                android:padding="3dp"
-                android:text="0:0"
-                android:textSize="15sp"/>
+                android:text="@string/score_number"
+                android:textSize="15sp"
+                android:layout_centerInParent="true"
+                />
 
             <android.support.v7.widget.CardView
-                android:id="@+id/cv_player3"
+                android:id="@+id/cv_team2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentStart="false"
-                android:layout_marginBottom="5dp"
-                android:layout_toRightOf="@+id/game_vs"
-                app:cardCornerRadius="2dp">
+                android:layout_toRightOf="@+id/game_score"
+                app:cardCornerRadius="2dp"
+                app:cardBackgroundColor="@color/red_team"
+                android:layout_marginLeft="5dp">
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -159,25 +126,8 @@
                         android:layout_marginLeft="2dp"
                         android:layout_toLeftOf="@+id/game_player3_avatar"
                         android:gravity="center_vertical|right"
-                        android:text="Player3"/>
-                </RelativeLayout>
+                        android:text="@string/player_name_value"/>
 
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/cv_player4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/cv_player3"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@+id/cv_player3"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                app:cardCornerRadius="2dp">
-
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/game_player4_avatar"
@@ -187,7 +137,8 @@
                         android:layout_margin="5dp"
                         android:src="@drawable/account"
                         app:civ_border_color="#FF000000"
-                        app:civ_border_width="2dp"/>
+                        app:civ_border_width="2dp"
+                        android:layout_below="@+id/game_player3_avatar"/>
 
                     <TextView
                         android:id="@+id/game_player4_name"
@@ -198,8 +149,9 @@
                         android:layout_marginLeft="2dp"
                         android:layout_toLeftOf="@+id/game_player4_avatar"
                         android:gravity="center_vertical|right"
-                        android:text="Player4"/>
+                        android:text="@string/player_name_value"/>
                 </RelativeLayout>
+
             </android.support.v7.widget.CardView>
         </RelativeLayout>
     </com.balysv.materialripple.MaterialRippleLayout>

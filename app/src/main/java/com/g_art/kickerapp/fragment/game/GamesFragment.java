@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.g_art.kickerapp.R;
 import com.g_art.kickerapp.activity.KickerAppActivity;
 import com.g_art.kickerapp.adapter.GamesViewAdapter;
-import com.g_art.kickerapp.fragment.PlayerFragment;
+import com.g_art.kickerapp.fragment.profile.PlayerFragment;
 import com.g_art.kickerapp.model.Game;
 import com.g_art.kickerapp.model.Player;
 import com.g_art.kickerapp.utils.RecyclerItemClickListener;
@@ -26,7 +26,6 @@ import com.g_art.kickerapp.utils.api.GameApi;
 import com.g_art.kickerapp.utils.rest.RestClient;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import retrofit.Callback;
