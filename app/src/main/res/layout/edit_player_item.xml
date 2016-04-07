@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.balysv.materialripple.MaterialRippleLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:mrl_rippleDelayClick="true"
+    app:mrl_rippleOverlay="true"
+    >
+
+    <RelativeLayout
+        android:id="@+id/rl_player_item"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/edit_item_player_avatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="16dp"
+            android:src="@drawable/account"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="2dp"/>
+
+        <TextView
+            android:id="@+id/edit_item_player_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/edit_item_player_avatar"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/edit_item_player_avatar"
+            android:layout_marginLeft="72dp"
+            android:layout_toLeftOf="@+id/participate"
+            android:gravity="center_vertical"
+            android:text="@string/player_name_value"
+            android:textSize="16sp"/>
+
+        <Switch
+            android:id="@+id/participate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"/>
+
+    </RelativeLayout>
+</com.balysv.materialripple.MaterialRippleLayout>

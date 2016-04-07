@@ -65,9 +65,12 @@ public class GamesViewAdapter extends RecyclerView.Adapter<GamesViewAdapter.View
                 if (team1.getPlayers().size() > 1) {
                     player2 = team1.getPlayers().get(1);
                 }
-                player3 = team2.getPlayers().get(0);
-                if (team2.getPlayers().size() > 1) {
-                    player4 = team2.getPlayers().get(1);
+
+                if (team2.getPlayers() != null && !team2.getPlayers().isEmpty()) {
+                    player3 = team2.getPlayers().get(0);
+                    if (team2.getPlayers().size() > 1) {
+                        player4 = team2.getPlayers().get(1);
+                    }
                 }
 
                 score = team1.getScores() + ":" + team2.getScores();

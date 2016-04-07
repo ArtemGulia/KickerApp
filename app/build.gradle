@@ -24,7 +24,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -35,37 +35,34 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
+task('copyExt', type: Copy) {
+    from('outputs\\apk')
+    into('C:\\Users\\G_Art\\Google Drive\\KickerApp')
+}
+
 dependencies {
     //Non-Gradle Support Libraries
     compile fileTree(dir: 'libs', include: ['*.jar'])
     //Google Support Libraries
     compile 'com.google.android.gms:play-services-auth:8.3.0'
     compile 'com.android.support:appcompat-v7:23.2.1'
-    compile 'com.android.support:design:23.1.1'
-
+    compile 'com.android.support:design:23.2.1'
     //Image
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'de.hdodenhof:circleimageview:2.0.0'
-
     //Animation
 //    compile 'jp.wasabeef:recyclerview-animators:2.2.0'
     compile 'com.balysv:material-ripple:1.0.2'
-
     //Database
-    compile 'io.realm:realm-android:0.87.4'
-
+//    compile 'io.realm:realm-android:0.87.4'
     //External Support Libraries
     compile 'com.github.nkzawa:socket.io-client:0.3.0'
     compile 'com.google.code.gson:gson:2.4'
-    compile 'io.github.yavski:fab-speed-dial:1.0.3'
-
     //Social
     //Facebook
     compile 'com.facebook.android:facebook-android-sdk:4.+'
-
     //Twitter
     compile('com.twitter.sdk.android:twitter:1.12.1@aar') {
         transitive = true;
     }
-
 }

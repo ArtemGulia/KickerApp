@@ -150,7 +150,6 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         okFab = (FloatingActionButton) findViewById(R.id.okFab);
         if (okFab != null) {
             okFab.hide();
-            okFab.setOnClickListener(this);
         }
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -382,11 +381,6 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
             case R.id.fab:
                 openGameFragment();
                 break;
-            case R.id.okFab:
-                Snackbar.make(findViewById(R.id.contentContainer),
-                    "Create Game!!",
-                    Snackbar.LENGTH_LONG).show();
-                break;
             case R.id.nav_header_player_avatar:
                 openPlayerProfileFromNV();
                 break;
@@ -490,15 +484,15 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void showOkFab() {
-        if (okFab != null && !okFab.isShown()) {
-            okFab.show();
-        }
+//        if (okFab != null && !okFab.isShown()) {
+//            okFab.show();
+//        }
     }
 
     public void hideOkFab() {
-        if (okFab != null && okFab.isShown()) {
-            okFab.hide();
-        }
+//        if (okFab != null && okFab.isShown()) {
+//            okFab.hide();
+//        }
     }
 
     public void showAddFab() {

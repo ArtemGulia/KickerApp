@@ -35,4 +35,7 @@
     <string name="score_number">0:0</string>
     <string name="vs_game">VS</string>
 
+    <string name="players_edit_dialog_title">Choose Players</string>
+    <string name="players_edit_dialog_ok">OK</string>
+
 </resources>

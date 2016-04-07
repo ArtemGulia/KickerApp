@@ -6,6 +6,7 @@ import com.g_art.kickerapp.model.Team;
 import com.g_art.kickerapp.services.GameService;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -58,6 +59,19 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    public boolean isTeamEmpty(Team team) {
+        if (team == null) {
+            return true;
+        }
+
+        List<Player> players = team.getPlayers();
+        if (players == null || players.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void addPlayerToFTeam(Game game, Player newPlayer) {
         if (game != null && newPlayer != null) {
             List<Player> players = game.getPlayers();
@@ -75,6 +89,71 @@ public class GameServiceImpl implements GameService {
             fTeam.addPlayer(newPlayer);
             game.addPlayer(newPlayer);
         }
+    }
+
+    public void changePlayersInFTeam(Game game, Player fPlayer, Player sPlayer) {
+        if (fPlayer != null && sPlayer != null && game != null) {
+            List<Player> players = game.getPlayers();
+
+            Team fTeam = game.getFTeam();
+
+            changePlayersInTeam(game, fPlayer, sPlayer, players, fTeam);
+        }
+    }
+    public void changePlayersInSTeam(Game game, Player fPlayer, Player sPlayer) {
+        if (fPlayer != null && sPlayer != null && game != null) {
+            List<Player> players = game.getPlayers();
+
+            Team sTeam = game.getSTeam();
+
+            changePlayersInTeam(game, fPlayer, sPlayer, players, sTeam);
+        }
+    }
+
+    @Override
+    public void changePlayersInTeam(Game game, Team team, List<Player> players) {
+        if (team != null && players != null && !players.isEmpty() && game != null) {
+            List<Player> inGame = game.getPlayers();
+
+            Iterator<Player> it = inGame.iterator();
+            while (it.hasNext()) {
+                Player inGamePlayer = it.next();
+                for (Player pl : team.getPlayers()) {
+                    if (pl.get_id().equals(inGamePlayer.get_id())) {
+                        it.remove();
+                    }
+                }
+            }
+
+            team.setPlayers(players);
+
+            for (Player player : players) {
+                game.addPlayer(player);
+            }
+        }
+    }
+
+    private void changePlayersInTeam(Game game, Player fPlayer, Player sPlayer, List<Player> players, Team team) {
+        Iterator<Player> it = players.iterator();
+        while (it.hasNext()) {
+            Player inGamePlayer = it.next();
+            if (team.getPlayers() != null && !team.getPlayers().isEmpty()) {
+                for (Player pl : team.getPlayers()) {
+                    if (pl.get_id().equals(inGamePlayer.get_id())) {
+                        it.remove();
+                    }
+                }
+            }
+        }
+
+        List<Player> newPlayers = new ArrayList<>();
+        newPlayers.add(fPlayer);
+        newPlayers.add(sPlayer);
+
+        team.setPlayers(newPlayers);
+
+        game.addPlayer(fPlayer);
+        game.addPlayer(sPlayer);
     }
 
     @Override

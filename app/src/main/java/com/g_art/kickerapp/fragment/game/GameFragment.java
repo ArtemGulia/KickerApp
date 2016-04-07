@@ -1,9 +1,15 @@
 package com.g_art.kickerapp.fragment.game;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
@@ -18,19 +24,21 @@ import android.widget.Toast;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.g_art.kickerapp.R;
 import com.g_art.kickerapp.activity.KickerAppActivity;
+import com.g_art.kickerapp.fragment.dialog.EditPlayersDialog;
 import com.g_art.kickerapp.model.Game;
 import com.g_art.kickerapp.model.GameState;
 import com.g_art.kickerapp.model.Player;
 import com.g_art.kickerapp.model.Team;
 import com.g_art.kickerapp.services.GameService;
+import com.g_art.kickerapp.services.impl.DTOTransformerImpl;
 import com.g_art.kickerapp.services.impl.GameServiceImpl;
+import com.g_art.kickerapp.services.transformer.DTOTransformer;
 import com.g_art.kickerapp.utils.api.GameApi;
+import com.g_art.kickerapp.utils.api.UserApi;
 import com.g_art.kickerapp.utils.rest.RestClient;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,16 +53,24 @@ import retrofit.client.Response;
  */
 public class GameFragment extends Fragment implements View.OnClickListener {
 
+    private static final String EDIT_PLAYERS_DIALOG = "editPlayersDialog";
+    private static final int DIALOG_FRAGMENT = 1;
+
     private View view;
+
     private Player mPlayer;
     private boolean mIsNewGame;
     private String mGameId;
+    private int tempClickId;
     private Game mGame;
+
     private ProgressBar mProgressBar;
+    private ProgressDialog mProgressDialog;
+
     private GameViewHolder mGameViewHolder;
     private GameService mGameService;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
+    private FloatingActionButton okFab;
 
     @Nullable
     @Override
@@ -79,14 +95,14 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
         if (mIsNewGame) {
             ((KickerAppActivity) getActivity()).hideAddFab();
-            ((KickerAppActivity) getActivity()).showOkFab();
+            showOkFAB();
             mSwipeRefreshLayout.setRefreshing(false);
             mSwipeRefreshLayout.setEnabled(false);
 
             Game newGame = mGameService.createGame(mPlayer);
             updateUI(newGame);
         } else {
-            ((KickerAppActivity) getActivity()).hideOkFab();
+            hideOkFAB();
             ((KickerAppActivity) getActivity()).showAddFab();
             mProgressBar.setVisibility(View.VISIBLE);
             mGameViewHolder.setVisibility(View.GONE);
@@ -108,6 +124,17 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        okFab = (FloatingActionButton) getActivity().findViewById(R.id.okFab);
+        if (okFab != null) {
+            showOkFAB();
+            okFab.setOnClickListener(this);
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         ActionBar actionBar = ((KickerAppActivity) getActivity()).getSupportActionBar();
@@ -120,7 +147,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onDestroy() {
-        ((KickerAppActivity) getActivity()).hideOkFab();
+        hideOkFAB();
         ((KickerAppActivity) getActivity()).showAddFab();
         ((KickerAppActivity) getActivity()).enableNavigation();
         super.onDestroy();
@@ -131,21 +158,29 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         int id = v.getId();
         switch (id) {
             case R.id.rl_team1:
+                saveTempClickId(id);
                 onTeamClick(mGame.getFTeam());
                 break;
 
             case R.id.rl_team2:
+                saveTempClickId(id);
                 onTeamClick(mGame.getSTeam());
+                break;
+
+            case R.id.okFab:
+                createGame();
                 break;
         }
     }
 
+    private void createGame() {
+        saveGame();
+    }
+
     private void onTeamClick(Team team) {
         if (mIsNewGame) {
-            // TODO: 1/4/2016 add or change players
-
             // TODO: 31/3/2016 Get available players for the game
-            getAvailablePlayers(mGame);
+            getAvailablePlayers(mGame, team);
 
         } else {
             GameState gState = mGame.getState();
@@ -158,16 +193,20 @@ public class GameFragment extends Fragment implements View.OnClickListener {
                     }
                     break;
                 case CREATED:
-                    getAvailablePlayers(mGame);
+                    getAvailablePlayers(mGame, team);
                     break;
                 case READY:
-                    getAvailablePlayers(mGame);
+                    getAvailablePlayers(mGame, team);
                     break;
                 case FINISHED:
                     Toast.makeText(getActivity(), "Game is already finished", Toast.LENGTH_SHORT).show();
                     break;
             }
         }
+    }
+
+    private void saveTempClickId(int clickId) {
+        tempClickId = clickId;
     }
 
     private void addScore(String teamId) {
@@ -188,14 +227,14 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-    private void getAvailablePlayers(Game mGame) {
+    private void getAvailablePlayers(Game mGame, final Team team) {
         GameApi gameApi = RestClient.getGameApi();
-
+        showDialog();
         gameApi.getPlayersForTheGame(mGame, new Callback<List<Player>>() {
             @Override
             public void success(List<Player> players, Response response) {
                 if (!players.isEmpty()) {
-                    Toast.makeText(getActivity(), "Have "+ players.size() + " players", Toast.LENGTH_SHORT).show();
+                    openPlayersDialog(players, team);
                 }
             }
 
@@ -206,24 +245,133 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         });
     }
 
-    private void addPlayerToTeam(Team team, Player player) {
-        if (team != null && player != null) {
-            mGameService.addPlayerToFTeam(mGame, player);
+    private void openPlayersDialog(List<Player> players, Team team) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        Fragment prev = getFragmentManager().findFragmentByTag(EDIT_PLAYERS_DIALOG);
+
+        if (prev != null) {
+            transaction.remove(prev);
+        }
+
+        transaction.addToBackStack(null);
+
+        ArrayList<Player> aPlayers = new ArrayList<Player>(players);
+
+        ArrayList<String> inGameIdList = new ArrayList<>(2);
+        String teamId = null;
+        if (team != null) {
+            teamId = team.get_id();
+            List<Player> tPlayers = team.getPlayers();
+            if (tPlayers != null && !tPlayers.isEmpty()) {
+                for (Player pl : tPlayers) {
+                    aPlayers.add(0, pl);
+                    inGameIdList.add(pl.get_id());
+                }
+            }
+        }
+
+
+        DialogFragment newFragment = EditPlayersDialog.newInstance(aPlayers, inGameIdList, teamId);
+        newFragment.setTargetFragment(this, DIALOG_FRAGMENT);
+        hideProgressDialog();
+        newFragment.show(transaction, EDIT_PLAYERS_DIALOG);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode) {
+            case DIALOG_FRAGMENT:
+
+                if (resultCode == Activity.RESULT_OK) {
+                    doPositiveClick(data);
+                    // After Ok code.
+                } else if (resultCode == Activity.RESULT_CANCELED){
+                    // After Cancel code.
+                    // Change Nothing
+                }
+
+                break;
         }
     }
 
-    private boolean isPlayerFits(Game game, Team team) {
-        return mGameService.isPlayerFits(game, team);
-    }
+    private void doPositiveClick(Intent data) {
+        if (data != null) {
+            List<String> playersIds = data.getStringArrayListExtra(EditPlayersDialog.PLAYERS_ID_LIST);
+            String teamId = data.getStringExtra(EditPlayersDialog.TEAM_ID);
 
-    private boolean isPlayerFits(Game game, Team team, Player player) {
-        return mGameService.isPlayerFits(game, team, player);
-    }
+            if (teamId == null) {
+                //todo create new team and add players there
+                getPlayers(playersIds, null);
+            } else {
+                //todo get this team from game and change players there
+                getPlayers(playersIds, teamId);
+            }
 
-    private void showPlayerInfo(Player player) {
-        if (null != player) {
-            Toast.makeText(getActivity(), player.getDisplayName(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void getPlayers(List<String> playersIds, final String teamId) {
+        UserApi userApi = RestClient.getUserApi();
+        showDialog();
+        userApi.getPlayers(playersIds, new Callback<List<Player>>() {
+            @Override
+            public void success(List<Player> players, Response response) {
+                if (players != null) {
+                    changePlayers(players, teamId);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(getActivity(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void changePlayers(List<Player> players, String teamId) {
+        hideProgressDialog();
+        if (mIsNewGame) {
+            Player fPlayer = players.get(0);
+            Player sPlayer = null;
+            if (players.size() > 1) {
+                sPlayer = players.get(1);
+            }
+            if (tempClickId == R.id.rl_team1) {
+                mGameService.changePlayersInFTeam(mGame, fPlayer, sPlayer);
+            } else {
+                mGameService.changePlayersInSTeam(mGame, fPlayer, sPlayer);
+            }
+            updateUI(mGame);
+        } else {
+            List<Team> teams = mGame.getTeams();
+            for (Team team : teams) {
+                if (team.get_id().equals(teamId)) {
+                    mGameService.changePlayersInTeam(mGame, team, players);
+                }
+            }
+            saveGame();
+        }
+    }
+
+    private void saveGame() {
+        GameApi gameApi = RestClient.getGameApi();
+
+        DTOTransformer tr = new DTOTransformerImpl();
+
+        showDialog();
+        gameApi.updateGame(tr.transform(mGame), new Callback<Game>() {
+            @Override
+            public void success(Game game, Response response) {
+                updateUI(game);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(getActivity(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
     private void requestForData() {
@@ -244,7 +392,11 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateUI(Game game) {
+        hideProgressDialog();
         if (game != null) {
+            if (game.get_id() != null && !game.get_id().isEmpty()) {
+                mIsNewGame = false;
+            }
             mProgressBar.setVisibility(View.GONE);
             mGameViewHolder.setVisibility(View.VISIBLE);
 
@@ -252,6 +404,31 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             mGameViewHolder.setGame(getActivity(), mGame);
 
             mSwipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    private void showOkFAB() {
+        if (okFab != null) {
+            okFab.show();
+        }
+    }
+
+    private void hideOkFAB() {
+        if (okFab != null) {
+            okFab.hide();
+        }
+    }
+
+    private void showDialog() {
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setMessage(getString(R.string.loading));
+        mProgressDialog.setIndeterminate(true);
+        mProgressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.hide();
         }
     }
 

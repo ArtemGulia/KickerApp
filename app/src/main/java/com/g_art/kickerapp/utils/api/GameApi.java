@@ -2,6 +2,7 @@ package com.g_art.kickerapp.utils.api;
 
 import com.g_art.kickerapp.model.Game;
 import com.g_art.kickerapp.model.Player;
+import com.g_art.kickerapp.model.dto.GameDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,10 @@ public interface GameApi {
     @Headers("Content-Type: application/json")
     @POST("/games/create")
     void createGame(Player user, Callback<Game> callback);
+
+    @Headers("Content-Type: application/json")
+    @POST("/games/update")
+    void updateGame(@Body GameDTO game, Callback<Game> callback);
 
     @Headers("Content-Type: application/json")
     @POST("/games/players")
