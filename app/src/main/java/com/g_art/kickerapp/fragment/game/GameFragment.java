@@ -79,6 +79,9 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         view = inflater.inflate(R.layout.fragment_game_screen, container, false);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.game_screen_swipe);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent,
+                R.color.colorPrimary,
+                R.color.colorPrimaryDark);
 
         mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 
@@ -94,16 +97,12 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         }
 
         if (mIsNewGame) {
-            ((KickerAppActivity) getActivity()).hideAddFab();
-            showOkFAB();
             mSwipeRefreshLayout.setRefreshing(false);
             mSwipeRefreshLayout.setEnabled(false);
 
             Game newGame = mGameService.createGame(mPlayer);
             updateUI(newGame);
         } else {
-            hideOkFAB();
-            ((KickerAppActivity) getActivity()).showAddFab();
             mProgressBar.setVisibility(View.VISIBLE);
             mGameViewHolder.setVisibility(View.GONE);
             requestForData();
@@ -129,7 +128,13 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
         okFab = (FloatingActionButton) getActivity().findViewById(R.id.okFab);
         if (okFab != null) {
-            showOkFAB();
+            if (mIsNewGame) {
+                showOkFAB();
+                ((KickerAppActivity) getActivity()).hideAddFab();
+            } else {
+                hideOkFAB();
+                ((KickerAppActivity) getActivity()).showAddFab();
+            }
             okFab.setOnClickListener(this);
         }
     }
