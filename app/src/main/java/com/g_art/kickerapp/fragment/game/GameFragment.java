@@ -128,13 +128,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
         okFab = (FloatingActionButton) getActivity().findViewById(R.id.okFab);
         if (okFab != null) {
-            if (mIsNewGame) {
-                showOkFAB();
-                ((KickerAppActivity) getActivity()).hideAddFab();
-            } else {
-                hideOkFAB();
-                ((KickerAppActivity) getActivity()).showAddFab();
-            }
+            updateFabs();
             okFab.setOnClickListener(this);
         }
     }
@@ -179,14 +173,17 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     }
 
     private void createGame() {
+        changeGameState(GameState.READY);
         saveGame();
+    }
+
+    private void changeGameState(GameState state) {
+        mGame.setState(state);
     }
 
     private void onTeamClick(Team team) {
         if (mIsNewGame) {
-            // TODO: 31/3/2016 Get available players for the game
             getAvailablePlayers(mGame, team);
-
         } else {
             GameState gState = mGame.getState();
             switch (gState) {
@@ -291,11 +288,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
                 if (resultCode == Activity.RESULT_OK) {
                     doPositiveClick(data);
                     // After Ok code.
-                } else if (resultCode == Activity.RESULT_CANCELED){
-                    // After Cancel code.
-                    // Change Nothing
                 }
-
                 break;
         }
     }
@@ -410,16 +403,28 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
             mSwipeRefreshLayout.setRefreshing(false);
         }
+
+        updateFabs();
+    }
+
+    private void updateFabs() {
+        if (mIsNewGame) {
+            showOkFAB();
+            ((KickerAppActivity) getActivity()).hideAddFab();
+        } else {
+            hideOkFAB();
+            ((KickerAppActivity) getActivity()).showAddFab();
+        }
     }
 
     private void showOkFAB() {
-        if (okFab != null) {
+        if (okFab != null && !okFab.isShown()) {
             okFab.show();
         }
     }
 
     private void hideOkFAB() {
-        if (okFab != null) {
+        if (okFab != null && okFab.isShown()) {
             okFab.hide();
         }
     }
