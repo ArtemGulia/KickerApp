@@ -38,4 +38,8 @@
     <string name="players_edit_dialog_title">Choose Players</string>
     <string name="players_edit_dialog_ok">OK</string>
 
+    <string name="start_game_fab_dialog">Play</string>
+    <string name="edit_game_name_fab_dialog">Enter the Name</string>
+    <string name="edit_win_score_fab_dialog">Max Score</string>
+
 </resources>

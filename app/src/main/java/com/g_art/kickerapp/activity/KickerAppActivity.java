@@ -3,6 +3,7 @@ package com.g_art.kickerapp.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -20,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +34,10 @@ import com.g_art.kickerapp.model.Player;
 import com.g_art.kickerapp.utils.api.UserApi;
 import com.g_art.kickerapp.utils.prefs.SharedPrefsHandler;
 import com.g_art.kickerapp.utils.rest.RestClient;
+import com.g_art.kickerapp.utils.ui.Fab;
 import com.github.nkzawa.socketio.client.Socket;
+import com.gordonwong.materialsheetfab.MaterialSheetFab;
+import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -68,8 +73,10 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     private CircleImageView mImgNavPlayerAvatar;
     private ActionBarDrawerToggle toggle;
 
-    private FloatingActionButton okFab;
     private FloatingActionButton addFab;
+
+    private MaterialSheetFab<Fab> materialSheetFab;
+    private Fab editFab;
 
     private DrawerLayout drawer;
 
@@ -78,6 +85,8 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     private Player mPlayer;
 
     private Socket mSocket;
+
+    private int statusBarColor;
 //    {
 //        try {
 //            mSocket = IO.socket("http://kickerapp-statistics19.rhcloud.com");
@@ -147,10 +156,16 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
             addFab.setOnClickListener(this);
         }
 
-        okFab = (FloatingActionButton) findViewById(R.id.okFab);
+        FloatingActionButton okFab = (FloatingActionButton) findViewById(R.id.okFab);
         if (okFab != null) {
             okFab.hide();
         }
+
+        editFab = (Fab) findViewById(R.id.editFab);
+        if (editFab != null) {
+            editFab.hide();
+        }
+        initEditFab();
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
@@ -195,9 +210,13 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         if (drawer != null) {
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
+            } else if (materialSheetFab.isSheetVisible()) {
+                materialSheetFab.hideSheet();
             } else {
                 super.onBackPressed();
             }
+        } else if (materialSheetFab.isSheetVisible()) {
+            materialSheetFab.hideSheet();
         } else {
             super.onBackPressed();
         }
@@ -394,6 +413,12 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                     drawer.openDrawer(GravityCompat.START);
                 }
                 break;
+            case R.id.fab_sheet_item_play:
+                break;
+            case R.id.fab_sheet_item_name:
+                break;
+            case R.id.fab_sheet_item_win_score:
+                break;
         }
     }
 
@@ -483,6 +508,47 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
+    private void initEditFab() {
+        View sheetView = findViewById(R.id.fab_sheet);
+        View overlay = findViewById(R.id.overlay);
+
+        // Create material sheet FAB
+        materialSheetFab = new MaterialSheetFab<>(editFab, sheetView, overlay,
+                R.color.background_card, R.color.colorPrimary);
+
+        // Set material sheet event listener
+        materialSheetFab.setEventListener(new MaterialSheetFabEventListener() {
+            @Override
+            public void onShowSheet() {
+                // Save current status bar color
+                statusBarColor = getStatusBarColor();
+                // Set darker status bar color to match the dim overlay
+                setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+            }
+
+            @Override
+            public void onHideSheet() {
+                // Restore status bar color
+                setStatusBarColor(statusBarColor);
+            }
+        });
+
+        TextView edGameName = (TextView) findViewById(R.id.fab_sheet_item_name);
+        TextView edGameWins = (TextView) findViewById(R.id.fab_sheet_item_win_score);
+        TextView edGamePlay = (TextView) findViewById(R.id.fab_sheet_item_play);
+        // Set material sheet item click listeners
+
+        if (edGameName != null) {
+            edGameName.setOnClickListener(this);
+        }
+        if (edGameWins != null) {
+            edGameWins.setOnClickListener(this);
+        }
+        if (edGamePlay != null) {
+            edGamePlay.setOnClickListener(this);
+        }
+    }
+
     public void showOkFab() {
 //        if (okFab != null && !okFab.isShown()) {
 //            okFab.show();
@@ -495,6 +561,18 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 //        }
     }
 
+    public void showEditFAB() {
+        if (editFab != null && !editFab.isShown()) {
+            editFab.show();
+        }
+    }
+
+    public void hideEditFAB() {
+        if (editFab != null && editFab.isShown()) {
+            editFab.hide();
+        }
+    }
+
     public void showAddFab() {
         if (addFab != null && !addFab.isShown()) {
             addFab.show();
@@ -504,6 +582,20 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     public void hideAddFab() {
         if (addFab != null && addFab.isShown()) {
             addFab.hide();
+        }
+    }
+
+
+    private int getStatusBarColor() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return getWindow().getStatusBarColor();
+        }
+        return 0;
+    }
+
+    private void setStatusBarColor(int color) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(color);
         }
     }
 }

@@ -5,4 +5,26 @@
     <color name="colorAccent">#2E7D32</color>
     <color name="red_team">#ffe2e2</color>
     <color name="blue_team">#E4EFFF</color>
+
+    <color name="background_card">#fff</color>
+
+
+    <color name="text_black_87">#de000000</color>
+    <color name="text_white_87">#deFFFFFF</color>
+
+    <color name="theme_accent">#FFEB3B</color>
+
+    <array name="note_neutral_colors">
+        <item>#9E9E9E</item>
+        <item>#455A64</item>
+        <item>#607D8B</item>
+    </array>
+
+    <array name="note_accent_colors">
+        <item>#039BE5</item>
+        <item>#3D51B3</item>
+        <item>#689f38</item>
+        <item>#FD7044</item>
+    </array>
+
 </resources>

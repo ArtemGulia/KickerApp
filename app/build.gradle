@@ -38,6 +38,7 @@ repositories {
 task('copyExt', type: Copy) {
     from('..\\app\\build\\outputs\\apk')
     into('C:\\Users\\G_Art\\Google Drive\\KickerApp')
+    println('Sucessfully copied!')
 }
 
 dependencies {

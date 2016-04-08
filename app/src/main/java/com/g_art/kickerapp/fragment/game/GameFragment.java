@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -16,6 +17,7 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -36,6 +38,9 @@ import com.g_art.kickerapp.services.transformer.DTOTransformer;
 import com.g_art.kickerapp.utils.api.GameApi;
 import com.g_art.kickerapp.utils.api.UserApi;
 import com.g_art.kickerapp.utils.rest.RestClient;
+import com.g_art.kickerapp.utils.ui.Fab;
+import com.gordonwong.materialsheetfab.MaterialSheetFab;
+import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -147,6 +152,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroy() {
         hideOkFAB();
+        ((KickerAppActivity) getActivity()).hideEditFAB();
         ((KickerAppActivity) getActivity()).showAddFab();
         ((KickerAppActivity) getActivity()).enableNavigation();
         super.onDestroy();
@@ -399,6 +405,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             mGameViewHolder.setVisibility(View.VISIBLE);
 
             mGame = game;
+            mGameId = mGame.get_id();
             mGameViewHolder.setGame(getActivity(), mGame);
 
             mSwipeRefreshLayout.setRefreshing(false);
@@ -410,10 +417,28 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     private void updateFabs() {
         if (mIsNewGame) {
             showOkFAB();
+            ((KickerAppActivity) getActivity()).hideEditFAB();
             ((KickerAppActivity) getActivity()).hideAddFab();
         } else {
-            hideOkFAB();
-            ((KickerAppActivity) getActivity()).showAddFab();
+            if (mGame != null) {
+                switch (mGame.getState()) {
+                    case READY:
+                    case CREATED:
+                        hideOkFAB();
+                        ((KickerAppActivity) getActivity()).showEditFAB();
+                        ((KickerAppActivity) getActivity()).hideAddFab();
+                        break;
+                    default:
+                        hideOkFAB();
+                        ((KickerAppActivity) getActivity()).hideEditFAB();
+                        ((KickerAppActivity) getActivity()).showAddFab();
+                        break;
+                }
+            } else {
+                hideOkFAB();
+                ((KickerAppActivity) getActivity()).showAddFab();
+                ((KickerAppActivity) getActivity()).hideEditFAB();
+            }
         }
     }
 
