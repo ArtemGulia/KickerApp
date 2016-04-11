@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -17,7 +16,6 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -26,6 +24,8 @@ import android.widget.Toast;
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.g_art.kickerapp.R;
 import com.g_art.kickerapp.activity.KickerAppActivity;
+import com.g_art.kickerapp.fragment.dialog.EditGameMaxScoreDialog;
+import com.g_art.kickerapp.fragment.dialog.EditGameNameDialog;
 import com.g_art.kickerapp.fragment.dialog.EditPlayersDialog;
 import com.g_art.kickerapp.model.Game;
 import com.g_art.kickerapp.model.GameState;
@@ -38,9 +38,6 @@ import com.g_art.kickerapp.services.transformer.DTOTransformer;
 import com.g_art.kickerapp.utils.api.GameApi;
 import com.g_art.kickerapp.utils.api.UserApi;
 import com.g_art.kickerapp.utils.rest.RestClient;
-import com.g_art.kickerapp.utils.ui.Fab;
-import com.gordonwong.materialsheetfab.MaterialSheetFab;
-import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -59,7 +56,14 @@ import retrofit.client.Response;
 public class GameFragment extends Fragment implements View.OnClickListener {
 
     private static final String EDIT_PLAYERS_DIALOG = "editPlayersDialog";
+    private static final String EDIT_NAME_DIALOG = "editNameDialog";
+    private static final String EDIT_SCORE_DIALOG = "editScoreDialog";
     private static final int DIALOG_FRAGMENT = 1;
+    private static final int GAME_NAME_REQUEST = 2;
+    private static final int GAME_WIN_SCORE_REQUEST = 3;
+
+    public static final String GAME_NAME = "game_name";
+    public static final String GAME_SCORE = "game_score";
 
     private View view;
 
@@ -178,6 +182,55 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    public void changeGameName() {
+        if (mGame != null) {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+            Fragment prev = getFragmentManager().findFragmentByTag(EDIT_NAME_DIALOG);
+
+            if (prev != null) {
+                transaction.remove(prev);
+            }
+
+            transaction.addToBackStack(null);
+            String currName = null;
+            if (mGame != null) {
+                currName = mGame.getName();
+            }
+            DialogFragment newFragment = EditGameNameDialog.newInstance(currName);
+            newFragment.setTargetFragment(this, GAME_NAME_REQUEST);
+            newFragment.show(transaction, EDIT_NAME_DIALOG);
+        }
+    }
+
+    public void changeGameWinScore() {
+        if (mGame != null) {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+            Fragment prev = getFragmentManager().findFragmentByTag(EDIT_SCORE_DIALOG);
+
+            if (prev != null) {
+                transaction.remove(prev);
+            }
+
+            transaction.addToBackStack(null);
+            int currScore = 10;
+            if (mGame != null) {
+                currScore = mGame.getWins();
+            }
+            DialogFragment newFragment = EditGameMaxScoreDialog.newInstance(currScore);
+            newFragment.setTargetFragment(this, GAME_WIN_SCORE_REQUEST);
+            newFragment.show(transaction, EDIT_SCORE_DIALOG);
+        }
+    }
+
+    public void startTheGame() {
+        if (!mIsNewGame && mGame != null) {
+            changeGameState(GameState.ACTIVE);
+            saveGame();
+        }
+    }
+
     private void createGame() {
         changeGameState(GameState.READY);
         saveGame();
@@ -237,7 +290,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
     private void getAvailablePlayers(Game mGame, final Team team) {
         GameApi gameApi = RestClient.getGameApi();
-        showDialog();
+        showProgressDialog();
         gameApi.getPlayersForTheGame(mGame, new Callback<List<Player>>() {
             @Override
             public void success(List<Player> players, Response response) {
@@ -288,18 +341,44 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch(requestCode) {
+        switch (requestCode) {
             case DIALOG_FRAGMENT:
-
                 if (resultCode == Activity.RESULT_OK) {
-                    doPositiveClick(data);
-                    // After Ok code.
+                    changePlayersPositiveClick(data);
+                }
+                break;
+            case GAME_NAME_REQUEST:
+                if (resultCode == Activity.RESULT_OK) {
+                    changeGameNamePositiveClick(data);
+                }
+                break;
+            case GAME_WIN_SCORE_REQUEST:
+                if (resultCode == Activity.RESULT_OK) {
+                    changeGameScorePositiveClick(data);
                 }
                 break;
         }
     }
 
-    private void doPositiveClick(Intent data) {
+    private void changeGameScorePositiveClick(Intent data) {
+        if (mGame != null && data != null) {
+            int newScore = data.getIntExtra(GAME_SCORE, 10);
+            mGame.setWins(newScore);
+            saveGame();
+        }
+    }
+
+    private void changeGameNamePositiveClick(Intent data) {
+        if (mGame != null && data != null) {
+            String newName = data.getStringExtra(GAME_NAME);
+            if (newName != null && !newName.isEmpty()) {
+                mGame.setName(newName);
+                saveGame();
+            }
+        }
+    }
+
+    private void changePlayersPositiveClick(Intent data) {
         if (data != null) {
             List<String> playersIds = data.getStringArrayListExtra(EditPlayersDialog.PLAYERS_ID_LIST);
             String teamId = data.getStringExtra(EditPlayersDialog.TEAM_ID);
@@ -317,7 +396,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
     private void getPlayers(List<String> playersIds, final String teamId) {
         UserApi userApi = RestClient.getUserApi();
-        showDialog();
+        showProgressDialog();
         userApi.getPlayers(playersIds, new Callback<List<Player>>() {
             @Override
             public void success(List<Player> players, Response response) {
@@ -329,6 +408,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             @Override
             public void failure(RetrofitError error) {
                 Toast.makeText(getActivity(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                hideProgressDialog();
             }
         });
     }
@@ -363,7 +443,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
         DTOTransformer tr = new DTOTransformerImpl();
 
-        showDialog();
+        showProgressDialog();
         gameApi.updateGame(tr.transform(mGame), new Callback<Game>() {
             @Override
             public void success(Game game, Response response) {
@@ -372,6 +452,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void failure(RetrofitError error) {
+                hideProgressDialog();
                 Toast.makeText(getActivity(), error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
         });
@@ -454,7 +535,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void showDialog() {
+    private void showProgressDialog() {
         mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setMessage(getString(R.string.loading));
         mProgressDialog.setIndeterminate(true);

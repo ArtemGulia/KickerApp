@@ -76,7 +76,7 @@ public class GameDTO {
     }
 
     public void setWins(int score) {
-        this.wins = wins;
+        this.wins = score;
     }
 
     @SerializedName("status")

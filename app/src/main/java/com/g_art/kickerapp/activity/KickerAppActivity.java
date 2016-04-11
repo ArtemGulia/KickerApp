@@ -414,10 +414,25 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                 }
                 break;
             case R.id.fab_sheet_item_play:
+                GameFragment gameFr = (GameFragment) getSupportFragmentManager().findFragmentByTag(GamesFragment.GAME_FRAGMENT);
+                if (gameFr != null) {
+                    gameFr.startTheGame();
+                    materialSheetFab.hideSheet();
+                }
                 break;
             case R.id.fab_sheet_item_name:
+                gameFr = (GameFragment) getSupportFragmentManager().findFragmentByTag(GamesFragment.GAME_FRAGMENT);
+                if (gameFr != null) {
+                    gameFr.changeGameName();
+                    materialSheetFab.hideSheet();
+                }
                 break;
             case R.id.fab_sheet_item_win_score:
+                gameFr = (GameFragment) getSupportFragmentManager().findFragmentByTag(GamesFragment.GAME_FRAGMENT);
+                if (gameFr != null) {
+                    gameFr.changeGameWinScore();
+                    materialSheetFab.hideSheet();
+                }
                 break;
         }
     }
@@ -514,7 +529,7 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
 
         // Create material sheet FAB
         materialSheetFab = new MaterialSheetFab<>(editFab, sheetView, overlay,
-                R.color.background_card, R.color.colorPrimary);
+                R.color.background_card, R.color.background_card);
 
         // Set material sheet event listener
         materialSheetFab.setEventListener(new MaterialSheetFabEventListener() {

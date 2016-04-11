@@ -11,10 +11,12 @@ import java.util.List;
  * Created by G_Art on 16/2/2016.
  */
 public class Game {
+    private static final int DEFAULT_WINS = 10;
+
     private String _id;
     private Player createdBy;
     private String name;
-    private int wins;
+    private int wins = DEFAULT_WINS;
     @SerializedName("status")
     private GameState state;
     private Date date;
@@ -102,7 +104,7 @@ public class Game {
     }
 
     public void setWins(int score) {
-        this.wins = wins;
+        this.wins = score;
     }
 
     @SerializedName("status")

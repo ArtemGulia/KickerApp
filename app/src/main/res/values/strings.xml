@@ -42,4 +42,12 @@
     <string name="edit_game_name_fab_dialog">Enter the Name</string>
     <string name="edit_win_score_fab_dialog">Max Score</string>
 
+    <string name="edit_game_name_dialog_title">Set Game Name</string>
+    <string name="edit_game_name_dialog_ok">OK</string>
+    <string name="edit_game_name_dialog_cancel">Cancel</string>
+
+    <string name="edit_game_win_score_dialog_title">Set Game Max Score</string>
+    <string name="edit_game_win_score_dialog_ok">OK</string>
+    <string name="edit_game_win_score_dialog_cancel">Cancel</string>
+    <string name="edit_game_win_score_dialog_min_val">Cannot be 0</string>
 </resources>
