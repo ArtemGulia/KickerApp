@@ -34,7 +34,7 @@ public class EditGameNameDialog extends DialogFragment {
 
         builder.setView(v);
 
-        edGameName = (EditText) v.findViewById(R.id.game_name);
+//        edGameName = (EditText) v.findViewById(R.id.game_name);
         String currName = getArguments().getString(GameFragment.GAME_NAME);
         if (currName != null && !currName.isEmpty()) {
             edGameName.setText(currName);

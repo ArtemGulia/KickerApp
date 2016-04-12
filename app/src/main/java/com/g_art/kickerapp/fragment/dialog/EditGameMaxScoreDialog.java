@@ -34,7 +34,7 @@ public class EditGameMaxScoreDialog extends DialogFragment {
 
         builder.setView(v);
 
-        edGameScore = (EditText) v.findViewById(R.id.game_win_score);
+//        edGameScore = (EditText) v.findViewById(R.id.game_win_score);
         Integer currScore = getArguments().getInt(GameFragment.GAME_SCORE);
         edGameScore.setText(currScore.toString());
 

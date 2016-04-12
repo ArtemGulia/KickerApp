@@ -7,16 +7,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
+import android.text.Editable;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,7 +45,9 @@ import com.g_art.kickerapp.utils.api.UserApi;
 import com.g_art.kickerapp.utils.rest.RestClient;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +60,7 @@ import retrofit.client.Response;
  * Kicker App
  * Created by G_Art on 23/2/2016.
  */
-public class GameFragment extends Fragment implements View.OnClickListener {
+public class GameFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener {
 
     private static final String EDIT_PLAYERS_DIALOG = "editPlayersDialog";
     private static final String EDIT_NAME_DIALOG = "editNameDialog";
@@ -97,6 +104,7 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         //Init game card
         mGameViewHolder = new GameViewHolder(view);
         mGameViewHolder.setOnClickListener(this);
+        mGameViewHolder.setOnFocusChanged(this);
 
         if (getArguments() != null) {
             Bundle bundle = getArguments();
@@ -155,11 +163,10 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         hideOkFAB();
-        ((KickerAppActivity) getActivity()).hideEditFAB();
         ((KickerAppActivity) getActivity()).showAddFab();
         ((KickerAppActivity) getActivity()).enableNavigation();
-        super.onDestroy();
     }
 
     @Override
@@ -177,63 +184,45 @@ public class GameFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.okFab:
-                createGame();
+                startTheGame();
                 break;
         }
     }
 
-    public void changeGameName() {
-        if (mGame != null) {
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-            Fragment prev = getFragmentManager().findFragmentByTag(EDIT_NAME_DIALOG);
-
-            if (prev != null) {
-                transaction.remove(prev);
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        int id = v.getId();
+        if (id == R.id.game_name && !hasFocus) {
+            changeGameName(((TextInputEditText)v).getText().toString());
+        } else if (id == R.id.game_win_score && !hasFocus) {
+            String value = (((TextInputEditText)v).getText().toString());
+            int newScore = Integer.parseInt(value);
+            if (newScore != 0 && newScore <= 10) {
+                changeGameWinScore(newScore);
+            } else {
+                ((TextInputEditText)v).setError(getResources().getString(R.string.edit_game_win_score_dialog_min_val));
             }
-
-            transaction.addToBackStack(null);
-            String currName = null;
-            if (mGame != null) {
-                currName = mGame.getName();
-            }
-            DialogFragment newFragment = EditGameNameDialog.newInstance(currName);
-            newFragment.setTargetFragment(this, GAME_NAME_REQUEST);
-            newFragment.show(transaction, EDIT_NAME_DIALOG);
         }
     }
 
-    public void changeGameWinScore() {
-        if (mGame != null) {
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+    public void changeGameName(String name) {
+        if (mGame != null && name != null) {
+            mGame.setName(name);
+        }
+    }
 
-            Fragment prev = getFragmentManager().findFragmentByTag(EDIT_SCORE_DIALOG);
-
-            if (prev != null) {
-                transaction.remove(prev);
-            }
-
-            transaction.addToBackStack(null);
-            int currScore = 10;
-            if (mGame != null) {
-                currScore = mGame.getWins();
-            }
-            DialogFragment newFragment = EditGameMaxScoreDialog.newInstance(currScore);
-            newFragment.setTargetFragment(this, GAME_WIN_SCORE_REQUEST);
-            newFragment.show(transaction, EDIT_SCORE_DIALOG);
+    public void changeGameWinScore(int newScore) {
+        if (mGame != null && newScore != 0) {
+            mGame.setWins(newScore);
         }
     }
 
     public void startTheGame() {
-        if (!mIsNewGame && mGame != null) {
+        if (mGame != null) {
             changeGameState(GameState.ACTIVE);
             saveGame();
         }
-    }
-
-    private void createGame() {
-        changeGameState(GameState.READY);
-        saveGame();
     }
 
     private void changeGameState(GameState state) {
@@ -481,6 +470,9 @@ public class GameFragment extends Fragment implements View.OnClickListener {
         if (game != null) {
             if (game.get_id() != null && !game.get_id().isEmpty()) {
                 mIsNewGame = false;
+                if (!mSwipeRefreshLayout.isEnabled()) {
+                    mSwipeRefreshLayout.setEnabled(true);
+                }
             }
             mProgressBar.setVisibility(View.GONE);
             mGameViewHolder.setVisibility(View.VISIBLE);
@@ -498,7 +490,6 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     private void updateFabs() {
         if (mIsNewGame) {
             showOkFAB();
-            ((KickerAppActivity) getActivity()).hideEditFAB();
             ((KickerAppActivity) getActivity()).hideAddFab();
         } else {
             if (mGame != null) {
@@ -506,19 +497,16 @@ public class GameFragment extends Fragment implements View.OnClickListener {
                     case READY:
                     case CREATED:
                         hideOkFAB();
-                        ((KickerAppActivity) getActivity()).showEditFAB();
                         ((KickerAppActivity) getActivity()).hideAddFab();
                         break;
                     default:
                         hideOkFAB();
-                        ((KickerAppActivity) getActivity()).hideEditFAB();
                         ((KickerAppActivity) getActivity()).showAddFab();
                         break;
                 }
             } else {
                 hideOkFAB();
                 ((KickerAppActivity) getActivity()).showAddFab();
-                ((KickerAppActivity) getActivity()).hideEditFAB();
             }
         }
     }
@@ -549,6 +537,11 @@ public class GameFragment extends Fragment implements View.OnClickListener {
     }
 
     public static class GameViewHolder {
+        public LinearLayout game_sheet;
+        public TextInputEditText txtGameName;
+        public TextInputEditText txtGameWinScore;
+        public TextView txtGameCreatedDate;
+        public TextView txtGameStatus;
 
         public CardView cv_game_team1;
         public CardView cv_game_team2;
@@ -573,6 +566,12 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
         // inner class to hold a reference to each item of RecyclerView
         public GameViewHolder(View itemView) {
+            game_sheet = (LinearLayout) itemView.findViewById(R.id.game_sheet);
+            txtGameName = (TextInputEditText) itemView.findViewById(R.id.game_name);
+            txtGameWinScore = (TextInputEditText) itemView.findViewById(R.id.game_win_score);
+            txtGameCreatedDate = (TextView) itemView.findViewById(R.id.game_created_date);
+            txtGameStatus = (TextView) itemView.findViewById(R.id.game_status);
+
             cv_game_team1 = (CardView) itemView.findViewById(R.id.cv_game_team1);
             cv_game_team2 = (CardView) itemView.findViewById(R.id.cv_game_team2);
             mr_game_team1 = (MaterialRippleLayout) itemView.findViewById(R.id.mr_game_team1);
@@ -601,7 +600,16 @@ public class GameFragment extends Fragment implements View.OnClickListener {
             mr_game_team2.setOnClickListener(onClickListener);
         }
 
+        public void setOnFocusChanged(View.OnFocusChangeListener listener) {
+            txtGameName.setOnFocusChangeListener(listener);
+            txtGameWinScore.setOnFocusChangeListener(listener);
+        }
+
         public void setVisibility(int visibility) {
+            game_sheet.setVisibility(visibility);
+            txtGameName.setVisibility(visibility);
+            txtGameWinScore.setVisibility(visibility);
+            txtGameCreatedDate.setVisibility(visibility);
             cv_game_team1.setVisibility(visibility);
             cv_game_team2.setVisibility(visibility);
             txtGameScore.setVisibility(visibility);
@@ -610,6 +618,14 @@ public class GameFragment extends Fragment implements View.OnClickListener {
 
         public void setGame(Context context, Game mGame) {
             if (mGame != null) {
+                setGameDate(mGame);
+
+                setGameWinScore(mGame);
+
+                setGameStatus(context, mGame);
+
+                isEditable(mGame);
+
                 if (mGame.getTeams() != null && !mGame.getTeams().isEmpty()) {
                     List<Team> teams = mGame.getTeams();
 
@@ -643,6 +659,37 @@ public class GameFragment extends Fragment implements View.OnClickListener {
                     }
                 }
             }
+        }
+
+        private void setGameStatus(Context context, Game mGame) {
+            GameState state = mGame.getState();
+            String[] states = context.getResources().getStringArray(R.array.game_state);
+            if (states != null && states.length == 4) {
+                StringBuilder builder = new StringBuilder();
+                builder.append("Game State: ").append(states[state.getStatus()]);
+                txtGameStatus.setText(builder.toString());
+            }
+        }
+
+        private void isEditable(Game mGame) {
+            if (mGame.get_id() != null && !mGame.get_id().isEmpty()) {
+                txtGameName.setEnabled(false);
+                txtGameWinScore.setEnabled(false);
+            }
+        }
+
+        private void setGameWinScore(Game mGame) {
+            txtGameName.setText(mGame.getName());
+            String winScore = Integer.toString(mGame.getWins());
+            txtGameWinScore.setText(winScore);
+        }
+
+        private void setGameDate(Game mGame) {
+            Date created = mGame.getDate();
+            SimpleDateFormat format = new SimpleDateFormat("HH:MM, EEE, MMM d, ''yy");
+            StringBuilder builder = new StringBuilder();
+            builder.append("Date Created: ").append(format.format(created));
+            txtGameCreatedDate.setText(builder.toString());
         }
 
         public void setTeamF(Context context, Team teamF) {

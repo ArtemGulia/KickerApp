@@ -39,8 +39,8 @@
     <string name="players_edit_dialog_ok">OK</string>
 
     <string name="start_game_fab_dialog">Play</string>
-    <string name="edit_game_name_fab_dialog">Enter the Name</string>
-    <string name="edit_win_score_fab_dialog">Max Score</string>
+    <string name="edit_game_name_fab_dialog">Game Name</string>
+    <string name="edit_win_score_fab_dialog">Max Score 10</string>
 
     <string name="edit_game_name_dialog_title">Set Game Name</string>
     <string name="edit_game_name_dialog_ok">OK</string>
@@ -49,5 +49,12 @@
     <string name="edit_game_win_score_dialog_title">Set Game Max Score</string>
     <string name="edit_game_win_score_dialog_ok">OK</string>
     <string name="edit_game_win_score_dialog_cancel">Cancel</string>
-    <string name="edit_game_win_score_dialog_min_val">Cannot be 0</string>
+    <string name="edit_game_win_score_dialog_min_val">Cannot be 0 or more than 10</string>
+
+    <string-array name="game_state">
+        <item>Created</item>
+        <item>Ready</item>
+        <item>Active</item>
+        <item>Finished</item>
+    </string-array>
 </resources>

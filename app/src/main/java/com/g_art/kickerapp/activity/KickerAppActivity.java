@@ -161,11 +161,11 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
             okFab.hide();
         }
 
-        editFab = (Fab) findViewById(R.id.editFab);
-        if (editFab != null) {
-            editFab.hide();
-        }
-        initEditFab();
+//        editFab = (Fab) findViewById(R.id.editFab);
+//        if (editFab != null) {
+//            editFab.hide();
+//        }
+//        initEditFab();
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
@@ -210,14 +210,18 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         if (drawer != null) {
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
-            } else if (materialSheetFab.isSheetVisible()) {
-                materialSheetFab.hideSheet();
-            } else {
+            }
+//            else if (materialSheetFab.isSheetVisible()) {
+//                materialSheetFab.hideSheet();
+//            }
+            else {
                 super.onBackPressed();
             }
-        } else if (materialSheetFab.isSheetVisible()) {
-            materialSheetFab.hideSheet();
-        } else {
+        }
+//        else if (materialSheetFab.isSheetVisible()) {
+//            materialSheetFab.hideSheet();
+//        }
+        else {
             super.onBackPressed();
         }
     }
@@ -413,27 +417,6 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
                     drawer.openDrawer(GravityCompat.START);
                 }
                 break;
-            case R.id.fab_sheet_item_play:
-                GameFragment gameFr = (GameFragment) getSupportFragmentManager().findFragmentByTag(GamesFragment.GAME_FRAGMENT);
-                if (gameFr != null) {
-                    gameFr.startTheGame();
-                    materialSheetFab.hideSheet();
-                }
-                break;
-            case R.id.fab_sheet_item_name:
-                gameFr = (GameFragment) getSupportFragmentManager().findFragmentByTag(GamesFragment.GAME_FRAGMENT);
-                if (gameFr != null) {
-                    gameFr.changeGameName();
-                    materialSheetFab.hideSheet();
-                }
-                break;
-            case R.id.fab_sheet_item_win_score:
-                gameFr = (GameFragment) getSupportFragmentManager().findFragmentByTag(GamesFragment.GAME_FRAGMENT);
-                if (gameFr != null) {
-                    gameFr.changeGameWinScore();
-                    materialSheetFab.hideSheet();
-                }
-                break;
         }
     }
 
@@ -524,44 +507,45 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void initEditFab() {
-        View sheetView = findViewById(R.id.fab_sheet);
-        View overlay = findViewById(R.id.overlay);
-
-        // Create material sheet FAB
-        materialSheetFab = new MaterialSheetFab<>(editFab, sheetView, overlay,
-                R.color.background_card, R.color.background_card);
-
-        // Set material sheet event listener
-        materialSheetFab.setEventListener(new MaterialSheetFabEventListener() {
-            @Override
-            public void onShowSheet() {
-                // Save current status bar color
-                statusBarColor = getStatusBarColor();
-                // Set darker status bar color to match the dim overlay
-                setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
-            }
-
-            @Override
-            public void onHideSheet() {
-                // Restore status bar color
-                setStatusBarColor(statusBarColor);
-            }
-        });
-
-        TextView edGameName = (TextView) findViewById(R.id.fab_sheet_item_name);
-        TextView edGameWins = (TextView) findViewById(R.id.fab_sheet_item_win_score);
-        TextView edGamePlay = (TextView) findViewById(R.id.fab_sheet_item_play);
-        // Set material sheet item click listeners
-
-        if (edGameName != null) {
-            edGameName.setOnClickListener(this);
-        }
-        if (edGameWins != null) {
-            edGameWins.setOnClickListener(this);
-        }
-        if (edGamePlay != null) {
-            edGamePlay.setOnClickListener(this);
-        }
+//        View sheetView = findViewById(R.id.fab_sheet);
+//        View overlay = findViewById(R.id.overlay);
+//
+//        // Create material sheet FAB
+//        materialSheetFab = new MaterialSheetFab<>(editFab, sheetView, overlay,
+//                getResources().getColor(R.color.background_card),
+//                getResources().getColor(R.color.background_card));
+//
+//        // Set material sheet event listener
+//        materialSheetFab.setEventListener(new MaterialSheetFabEventListener() {
+//            @Override
+//            public void onShowSheet() {
+//                // Save current status bar color
+//                statusBarColor = getStatusBarColor();
+//                // Set darker status bar color to match the dim overlay
+//                setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+//            }
+//
+//            @Override
+//            public void onHideSheet() {
+//                // Restore status bar color
+//                setStatusBarColor(statusBarColor);
+//            }
+//        });
+//
+//        TextView edGameName = (TextView) findViewById(R.id.fab_sheet_item_name);
+//        TextView edGameWins = (TextView) findViewById(R.id.fab_sheet_item_win_score);
+//        TextView edGamePlay = (TextView) findViewById(R.id.fab_sheet_item_play);
+//        // Set material sheet item click listeners
+//
+//        if (edGameName != null) {
+//            edGameName.setOnClickListener(this);
+//        }
+//        if (edGameWins != null) {
+//            edGameWins.setOnClickListener(this);
+//        }
+//        if (edGamePlay != null) {
+//            edGamePlay.setOnClickListener(this);
+//        }
     }
 
     public void showOkFab() {
@@ -577,15 +561,15 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void showEditFAB() {
-        if (editFab != null && !editFab.isShown()) {
-            editFab.show();
-        }
+//        if (editFab != null && !editFab.isShown()) {
+//            editFab.show();
+//        }
     }
 
     public void hideEditFAB() {
-        if (editFab != null && editFab.isShown()) {
-            editFab.hide();
-        }
+//        if (editFab != null && editFab.isShown()) {
+//            editFab.hide();
+//        }
     }
 
     public void showAddFab() {
@@ -600,6 +584,11 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    public void hideSheet() {
+//        if (materialSheetFab != null && materialSheetFab.isSheetVisible()) {
+//            materialSheetFab.hideSheet();
+//        }
+    }
 
     private int getStatusBarColor() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

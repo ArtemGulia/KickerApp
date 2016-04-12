@@ -104,6 +104,8 @@ public class GamesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+//        ((KickerAppActivity)getActivity()).hideSheet();
+//        ((KickerAppActivity)getActivity()).hideEditFAB();
         ActionBar actionBar = ((KickerAppActivity)getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setTitle(R.string.games_screen);

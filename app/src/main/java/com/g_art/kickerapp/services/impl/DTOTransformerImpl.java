@@ -47,6 +47,7 @@ public class DTOTransformerImpl implements DTOTransformer {
         gameDTO.setWins(game.getWins());
         gameDTO.setState(game.getState());
         gameDTO.setName(game.getName());
+        gameDTO.setDate(game.getDate());
 
         if (game.getCreatedBy() != null) {
             gameDTO.setCreatedBy(game.getCreatedBy().get_id());
