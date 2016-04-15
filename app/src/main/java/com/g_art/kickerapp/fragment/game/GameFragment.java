@@ -666,7 +666,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
             String[] states = context.getResources().getStringArray(R.array.game_state);
             if (states != null && states.length == 4) {
                 StringBuilder builder = new StringBuilder();
-                builder.append("Game State: ").append(states[state.getStatus()]);
+                builder.append("Game State: ").append(states[state.getStatus()-1]);//Because states starts from 1 and array from 0
                 txtGameStatus.setText(builder.toString());
             }
         }
