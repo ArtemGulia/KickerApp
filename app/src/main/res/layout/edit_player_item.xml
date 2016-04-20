@@ -33,9 +33,9 @@
             android:layout_alignTop="@+id/edit_item_player_avatar"
             android:layout_marginLeft="72dp"
             android:layout_toLeftOf="@+id/participate"
-            android:gravity="center_vertical"
             android:text="@string/player_name_value"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:gravity="center_vertical"/>
 
         <Switch
             android:id="@+id/participate"

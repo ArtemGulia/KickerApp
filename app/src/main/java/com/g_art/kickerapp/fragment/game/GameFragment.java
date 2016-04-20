@@ -14,23 +14,21 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.CardView;
-import android.text.Editable;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.g_art.kickerapp.R;
 import com.g_art.kickerapp.activity.KickerAppActivity;
-import com.g_art.kickerapp.fragment.dialog.EditGameMaxScoreDialog;
-import com.g_art.kickerapp.fragment.dialog.EditGameNameDialog;
 import com.g_art.kickerapp.fragment.dialog.EditPlayersDialog;
 import com.g_art.kickerapp.model.Game;
 import com.g_art.kickerapp.model.GameState;
@@ -49,6 +47,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +59,7 @@ import retrofit.client.Response;
  * Kicker App
  * Created by G_Art on 23/2/2016.
  */
-public class GameFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener {
+public class GameFragment extends Fragment implements View.OnClickListener, View.OnFocusChangeListener, AdapterView.OnItemSelectedListener {
 
     private static final String EDIT_PLAYERS_DIALOG = "editPlayersDialog";
     private static final String EDIT_NAME_DIALOG = "editNameDialog";
@@ -105,6 +104,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         mGameViewHolder = new GameViewHolder(view);
         mGameViewHolder.setOnClickListener(this);
         mGameViewHolder.setOnFocusChanged(this);
+        mGameViewHolder.setOnItemSelected(this);
 
         if (getArguments() != null) {
             Bundle bundle = getArguments();
@@ -195,15 +195,25 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         int id = v.getId();
         if (id == R.id.game_name && !hasFocus) {
             changeGameName(((TextInputEditText)v).getText().toString());
-        } else if (id == R.id.game_win_score && !hasFocus) {
-            String value = (((TextInputEditText)v).getText().toString());
+        }
+    }
+
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if ( parent.getId() == R.id.game_win_score_spinner) {
+            String value = parent.getItemAtPosition(position).toString();
             int newScore = Integer.parseInt(value);
             if (newScore != 0 && newScore <= 10) {
                 changeGameWinScore(newScore);
-            } else {
-                ((TextInputEditText)v).setError(getResources().getString(R.string.edit_game_win_score_dialog_min_val));
             }
         }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        int newScore = 10;
+        changeGameWinScore(newScore);
     }
 
     public void changeGameName(String name) {
@@ -220,9 +230,25 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
 
     public void startTheGame() {
         if (mGame != null) {
-            changeGameState(GameState.ACTIVE);
-            saveGame();
+            if(collectDataFromFields()) {
+                changeGameState(GameState.ACTIVE);
+                saveGame();
+            }
         }
+    }
+
+    private boolean collectDataFromFields() {
+        changeGameName((mGameViewHolder.txtGameName.getText().toString()));
+
+        String value = (mGameViewHolder.winScoreSpinner.getSelectedItem().toString());
+        int newScore = Integer.parseInt(value);
+        if (newScore != 0 && newScore <= 10) {
+            changeGameWinScore(newScore);
+        } else {
+            return false;
+        }
+        return true;
+
     }
 
     private void changeGameState(GameState state) {
@@ -312,13 +338,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         String teamId = null;
         if (team != null) {
             teamId = team.get_id();
-            List<Player> tPlayers = team.getPlayers();
-            if (tPlayers != null && !tPlayers.isEmpty()) {
-                for (Player pl : tPlayers) {
-                    aPlayers.add(0, pl);
-                    inGameIdList.add(pl.get_id());
-                }
-            }
+            filterPlayers(team, aPlayers, inGameIdList);
         }
 
 
@@ -326,6 +346,31 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         newFragment.setTargetFragment(this, DIALOG_FRAGMENT);
         hideProgressDialog();
         newFragment.show(transaction, EDIT_PLAYERS_DIALOG);
+    }
+
+    private void filterPlayers(Team team, ArrayList<Player> aPlayers, ArrayList<String> inGameIdList) {
+        List<Player> inGPlayers = mGame.getPlayers();
+        if (inGPlayers != null) {
+            for (Player inGPlayer : inGPlayers) {
+                Iterator<Player> it = aPlayers.iterator();
+                while (it.hasNext()) {
+                    Player rPlayer = it.next();
+                    if (rPlayer.get_id().equals(inGPlayer.get_id())) {
+                        it.remove();
+                        break;
+                    }
+                }
+            }
+        }
+
+        List<Player> tPlayers = team.getPlayers();
+
+        if (tPlayers != null && !tPlayers.isEmpty()) {
+            for (Player pl : tPlayers) {
+                aPlayers.add(0, pl);
+                inGameIdList.add(pl.get_id());
+            }
+        }
     }
 
     @Override
@@ -496,7 +541,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
                 switch (mGame.getState()) {
                     case READY:
                     case CREATED:
-                        hideOkFAB();
+                        showOkFAB();
                         ((KickerAppActivity) getActivity()).hideAddFab();
                         break;
                     default:
@@ -537,9 +582,11 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
     }
 
     public static class GameViewHolder {
-        public LinearLayout game_sheet;
+        public RelativeLayout game_sheet;
         public TextInputEditText txtGameName;
-        public TextInputEditText txtGameWinScore;
+        public TextView txtGameWinScore;
+        public Spinner winScoreSpinner;
+
         public TextView txtGameCreatedDate;
         public TextView txtGameStatus;
 
@@ -566,9 +613,11 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
 
         // inner class to hold a reference to each item of RecyclerView
         public GameViewHolder(View itemView) {
-            game_sheet = (LinearLayout) itemView.findViewById(R.id.game_sheet);
+            game_sheet = (RelativeLayout) itemView.findViewById(R.id.game_sheet);
             txtGameName = (TextInputEditText) itemView.findViewById(R.id.game_name);
-            txtGameWinScore = (TextInputEditText) itemView.findViewById(R.id.game_win_score);
+            txtGameWinScore = (TextView) itemView.findViewById(R.id.game_win_score_txt);
+            winScoreSpinner = (Spinner) itemView.findViewById(R.id.game_win_score_spinner);
+
             txtGameCreatedDate = (TextView) itemView.findViewById(R.id.game_created_date);
             txtGameStatus = (TextView) itemView.findViewById(R.id.game_status);
 
@@ -602,13 +651,17 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
 
         public void setOnFocusChanged(View.OnFocusChangeListener listener) {
             txtGameName.setOnFocusChangeListener(listener);
-            txtGameWinScore.setOnFocusChangeListener(listener);
+        }
+
+        public void setOnItemSelected(AdapterView.OnItemSelectedListener listener) {
+            winScoreSpinner.setOnItemSelectedListener(listener);
         }
 
         public void setVisibility(int visibility) {
             game_sheet.setVisibility(visibility);
             txtGameName.setVisibility(visibility);
             txtGameWinScore.setVisibility(visibility);
+            winScoreSpinner.setVisibility(visibility);
             txtGameCreatedDate.setVisibility(visibility);
             cv_game_team1.setVisibility(visibility);
             cv_game_team2.setVisibility(visibility);
@@ -620,7 +673,7 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
             if (mGame != null) {
                 setGameDate(mGame);
 
-                setGameWinScore(mGame);
+                setGameWinInfo(context, mGame);
 
                 setGameStatus(context, mGame);
 
@@ -674,14 +727,22 @@ public class GameFragment extends Fragment implements View.OnClickListener, View
         private void isEditable(Game mGame) {
             if (mGame.get_id() != null && !mGame.get_id().isEmpty()) {
                 txtGameName.setEnabled(false);
-                txtGameWinScore.setEnabled(false);
+                winScoreSpinner.setEnabled(false);
             }
         }
 
-        private void setGameWinScore(Game mGame) {
+        private void setGameWinInfo(Context context, Game mGame) {
             txtGameName.setText(mGame.getName());
-            String winScore = Integer.toString(mGame.getWins());
-            txtGameWinScore.setText(winScore);
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context,
+                    R.array.wins_score_array,
+                    android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            winScoreSpinner.setAdapter(adapter);
+            int position = 9;
+            if (mGame.getWins() != 0) {
+               position = mGame.getWins() - 1;
+            }
+            winScoreSpinner.setSelection(position);
         }
 
         private void setGameDate(Game mGame) {

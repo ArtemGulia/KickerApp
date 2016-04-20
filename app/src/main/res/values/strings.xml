@@ -40,7 +40,7 @@
 
     <string name="start_game_fab_dialog">Play</string>
     <string name="edit_game_name_fab_dialog">Game Name</string>
-    <string name="edit_win_score_fab_dialog">Max Score 10</string>
+    <string name="edit_win_score_fab_dialog">Max Score: </string>
 
     <string name="edit_game_name_dialog_title">Set Game Name</string>
     <string name="edit_game_name_dialog_ok">OK</string>
@@ -56,5 +56,18 @@
         <item>Ready</item>
         <item>Active</item>
         <item>Finished</item>
+    </string-array>
+
+    <string-array name="wins_score_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
     </string-array>
 </resources>
