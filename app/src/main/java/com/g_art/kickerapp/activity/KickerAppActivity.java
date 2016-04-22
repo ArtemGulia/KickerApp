@@ -21,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +36,6 @@ import com.g_art.kickerapp.utils.rest.RestClient;
 import com.g_art.kickerapp.utils.ui.Fab;
 import com.github.nkzawa.socketio.client.Socket;
 import com.gordonwong.materialsheetfab.MaterialSheetFab;
-import com.gordonwong.materialsheetfab.MaterialSheetFabEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -374,9 +372,9 @@ public class KickerAppActivity extends AppCompatActivity implements View.OnClick
             transaction.commit();
         }
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_games) {
             fragment = new GamesFragment();
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_tournaments) {
             fragment = new TournamentsFragment();
         }
 

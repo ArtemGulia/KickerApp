@@ -50,6 +50,7 @@
     <string name="edit_game_win_score_dialog_ok">OK</string>
     <string name="edit_game_win_score_dialog_cancel">Cancel</string>
     <string name="edit_game_win_score_dialog_min_val">Cannot be 0 or more than 10</string>
+    <string name="kicker_one">KickerOne</string>
 
     <string-array name="game_state">
         <item>Created</item>

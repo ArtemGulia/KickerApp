@@ -1,28 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="@string/nav_games" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/nav_tournaments" />
+    <group
+        android:id="@+id/nav_kicker_group"
+        android:checkableBehavior="single">
+        <item android:title="@string/kicker_one">
+            <menu>
+                <item
+                    android:id="@+id/nav_games"
+                    android:icon="@drawable/ic_games_24dp"
+                    android:title="@string/nav_games"/>
+                <item
+                    android:id="@+id/nav_tournaments"
+                    android:icon="@drawable/ic_tournament_black_24dp"
+                    android:title="@string/nav_tournaments"/>
+
+            </menu>
+        </item>
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_settings"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/settings" />
-            <item
-                android:id="@+id/nav_logout"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/logout" />
-        </menu>
-    </item>
+    <group
+        android:id="@+id/nav_settings_group">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="@string/settings"/>
+    </group>
+
+    <group
+        android:id="@+id/nav_exit_group">
+        <item
+            android:id="@+id/nav_logout"
+            android:title="@string/logout"/>
+    </group>
 
 </menu>

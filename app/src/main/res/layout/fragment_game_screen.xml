@@ -247,8 +247,9 @@
                     android:layout_toRightOf="@+id/game_win_score_txt"
                     android:layout_below="@+id/game_name_input_holder"
                     android:layout_alignBottom="@+id/game_win_score_txt"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"/>
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:gravity="center_horizontal"/>
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
